@@ -3,11 +3,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "vercel-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && next build",
     "start": "next start",
-    "lint": "next lint"
+    "format": "prettier -w \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"  \"./*.{js,jsx,ts,tsx,css,scss}\"",
+    "lint": "eslint ./src/**/*.tsx",
+    "proxy": "ngrok http 3000"
   },
   "dependencies": {
+    "canvas": "2.8.0",
+    "classnames": "^2.3.1",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2"
@@ -15,8 +19,14 @@
   "devDependencies": {
     "@types/node": "16.11.12",
     "@types/react": "17.0.37",
+    "autoprefixer": "^10.4.0",
     "eslint": "8.4.1",
     "eslint-config-next": "12.0.7",
+    "eslint-config-prettier": "^8.3.0",
+    "postcss": "^8.4.5",
+    "prettier": "^2.5.1",
+    "sass": "^1.45.0",
+    "tailwindcss": "^3.0.1",
     "typescript": "4.5.3"
   }
 }
