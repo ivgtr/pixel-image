@@ -1,15 +1,28 @@
 import classNames from "classnames";
 import type { NextPage } from "next";
 import Head from "next/head";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Form } from "../components/organisms/Form";
 import { Preview } from "../components/organisms/Preview";
 import { DefaultLayout } from "../layouts/DefaultLayout";
 
+const HOST_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://pixel-image.vercel.app";
+
+const defaultImageUrl =
+  "https://pbs.twimg.com/profile_images/1354479643882004483/Btnfm47p_400x400.jpg";
+const defaultCellSize = "15";
 const Home: NextPage = () => {
-  const [imageUrl, setImageUrl] = useState(
-    "https://pbs.twimg.com/profile_images/828753156523728896/ktuKrDkm_400x400.jpg"
-  );
+  const [imageUrl, setImageUrl] = useState<string | undefined>();
+
+  const handleImageUrl = useCallback((origUrl: string, size: string) => {
+    const url = new URL(`${HOST_URL}/api`);
+    url.searchParams.set("image", origUrl);
+    url.searchParams.set("size", size);
+    setImageUrl(url.toString());
+  }, []);
 
   return (
     <>
@@ -29,8 +42,12 @@ const Home: NextPage = () => {
           <section>
             <Preview imageUrl={imageUrl} />
           </section>
-          <section>
-            <Form />
+          <section className={classNames("mt-8")}>
+            <Form
+              handleImageUrl={handleImageUrl}
+              defaultImageUrl={defaultImageUrl}
+              defaultCellSize={defaultCellSize}
+            />
           </section>
         </main>
       </DefaultLayout>
