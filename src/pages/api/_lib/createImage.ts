@@ -2,41 +2,69 @@ import { createCanvas, Image } from "canvas";
 import { analyzeImage } from "./analyzer";
 import type { ParsedOptions } from "./parser";
 
-type ImageMimeType = "image/jpeg" | "image/png";
+const cellSize = (a: number, b: number, size: number): number[] => {
+  const rA = (a / size) | 0;
+  const rB = (b / size) | 0;
 
-const round64Size = (a: number, b: number): number[] => {
-  if (a > b) {
-  }
-  return [a, b];
-};
-
-const isBufferType = (type: ImageMimeType): type is ImageMimeType => {
-  return ["image/jpeg", "image/png"].includes(type);
+  return [rA, rB];
 };
 
 export const createImage = async ({
   image,
+  size,
   ...options
 }: ParsedOptions): Promise<string | Buffer> => {
+  // 画像のデータを取得
   const { base64Image, width, height } = await analyzeImage(image);
 
   if (!base64Image) throw new Error("image is not valid");
   if (!width) throw new Error("image width is not valid");
   if (!height) throw new Error("image height is not valid");
 
-  const [rWidth, rHeight] = round64Size(width, height);
+  // オリジナル画像描画用のキャンバスを作成
+  const imageCanvas = createCanvas(width, height);
+  const imageCtx = imageCanvas.getContext("2d");
 
-  const canvas = createCanvas(rWidth, rHeight);
-  const ctx = canvas.getContext("2d");
+  // オリジナル画像を描画
   const img = new Image();
-  img.onload = () => ctx.drawImage(img, 0, 0);
-
+  img.onload = () => imageCtx.drawImage(img, 0, 0, width, height);
   img.src = base64Image;
+
+  // ピクセル化後の画像描画用のキャンバスを作成
+  const pixelCanvas = createCanvas(width, height);
+  const pixelCtx = pixelCanvas.getContext("2d");
+
+  // ピクセル化後の画像を描画
+  const [rWidth, rHeight] = cellSize(width, height, size);
+  const pixelData = pixelCtx.getImageData(0, 0, rWidth, rHeight);
+
+  // ピクセル化後の画像を格納する配列を作成
+  const uint8ClampedArray = [...Array(rWidth * rHeight * 4)].map(() => 0);
+
+  for (let i = 0; i < rWidth; i++) {
+    for (let j = 0; j < rHeight; j++) {
+      const cell = imageCtx.getImageData(i * size, j * size, size, size);
+      const cellData = cell.data;
+      let avgR = 0;
+      let avgG = 0;
+      let avgB = 0;
+
+      for (let k = 0; k < size * size * 4; k += 4) {
+        avgR = ((avgR + cellData[k]) / 2) | 0;
+        avgG = ((avgG + cellData[k + 1]) / 2) | 0;
+        avgB = ((avgB + cellData[k + 2]) / 2) | 0;
+      }
+
+      pixelCtx.fillStyle = `rgb(${avgR}, ${avgG}, ${avgB})`;
+      pixelCtx.fillRect(i * size, j * size, size, size);
+    }
+  }
+
   let buffer: Buffer;
   if (options.type === "jpeg") {
-    buffer = await canvas.toBuffer("image/jpeg");
+    buffer = await pixelCanvas.toBuffer("image/jpeg");
   } else {
-    buffer = await canvas.toBuffer("image/png");
+    buffer = await pixelCanvas.toBuffer("image/png");
   }
 
   return buffer;
