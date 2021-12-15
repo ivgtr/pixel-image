@@ -15,7 +15,7 @@ const createPixelImage = (imageUrl: string) => {
 
 export const Preview = ({ imageUrl }: { imageUrl: string }) => {
   const url = React.useMemo(() => createPixelImage(imageUrl), [imageUrl]);
-  console.log(url);
+
   return (
     <div className={classNames("relative", "w-full", "h-72", "mt-12")}>
       {imageUrl && (
