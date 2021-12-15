@@ -10,7 +10,6 @@ export const analyzeImage = async (url: string) => {
   const { base64, ofset, type } = await axios
     .get(url, { responseType: "arraybuffer" })
     .then((response) => {
-      console.log(response);
       return {
         base64: Buffer.from(response.data, "binary").toString("base64"),
         ofset: imageSize(response.data),
