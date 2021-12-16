@@ -38,14 +38,14 @@ Markdown ファイルにも C&P して利用できます。
   - `default: 8`
 
 ```md
-https://glitch-image.vercel.app/api?<url=画像の URL>&[size=cell のサイズ]&[k=カラーの色数]
+https://pixel-image.vercel.app/api?<url=画像の URL>&[size=cell のサイズ]&[k=カラーの色数]
 ```
 
 ## Demo
 
 Web サイトで試すことができます。
 
-- https://glitch-image.vercel.app
+- https://pixel-image.vercel.app
 
 ## License
 
