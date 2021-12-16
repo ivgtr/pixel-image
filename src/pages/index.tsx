@@ -40,7 +40,7 @@ const Home: NextPage = () => {
             Pixel Image
           </h1>
         </div>
-        <main>
+        <main className={classNames("px-4")}>
           <section>
             <Preview imageUrl={imageUrl} />
           </section>
