@@ -25,14 +25,17 @@ const distance = (point1: number[], point2: number[]) => {
   return x * x + y * y + z * z;
 };
 
+const MAX_ITER = 1000;
+
 // Process the received data based on the k-means method
 export const cluster = (data: number[][], k: number) => {
   const mat = createRGBArray(k);
   const clusters = [...Array(data.length)].map(() => 0);
   let prevClusters = [];
   let changed = true;
+  let iter = 0;
 
-  while (changed) {
+  while (changed && iter < MAX_ITER) {
     changed = false;
     prevClusters = [...clusters];
     for (let i = 0; i < data.length; i++) {
@@ -63,6 +66,8 @@ export const cluster = (data: number[][], k: number) => {
     if (prevClusters.join("") !== clusters.join("")) {
       changed = true;
     }
+
+    iter++;
   }
 
   return { clusters, mat };
