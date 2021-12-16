@@ -11,7 +11,7 @@
 
 <div align="center">
   <h3>
-    <img width="100" alt="crop icon" src="https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png">
+    <img width="100" alt="crop icon" src="https://pixel-image.vercel.app/api?image=https://i.imgur.com/5fe7tawm.png">
   </h3>
 </div>
 
