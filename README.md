@@ -1,34 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
+  <h3>
+    Pixel Image
+  </h3>
+  <p align="center">💾 画像をドット絵にするAPI及びWebサイト</p>
+</div>
 
-## Getting Started
+## Setup
 
-First, run the development server:
+`?image=` に画像の `URL` を指定すると、その画像をドット絵にして返します。
 
-```bash
-npm run dev
-# or
-yarn dev
+<div align="center">
+  <h3>
+    <img width="100" alt="crop icon" src="https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png">
+  </h3>
+</div>
+
+```md
+https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Markdown ファイルにも C&P して利用できます。
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```md
+[![pixel-image](https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png)](https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png)
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Config
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- `?image=`
+  - 画像の URL を指定
+  - `required`
+- `?size=`
+  - cell のサイズを`px`で指定
+  - `default: 15`
+- `?k=`
+  - カラーの色数を指定
+  - `default: 8`
 
-## Learn More
+```md
+https://glitch-image.vercel.app/api?<url=画像の URL>&[size=cell のサイズ]&[k=カラーの色数]
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Demo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Web サイトで試すことができます。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- https://glitch-image.vercel.app
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+MIT ©[ivgtr](https://github.com/ivgtr)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[![Twitter Follow](https://img.shields.io/twitter/follow/ivgtr?style=social)](https://twitter.com/ivgtr) [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE) [![Donate](https://img.shields.io/badge/%EF%BC%84-support-green.svg?style=flat-square)](https://www.buymeacoffee.com/ivgtr)
