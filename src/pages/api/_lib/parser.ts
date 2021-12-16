@@ -5,13 +5,14 @@ export type OptionalType = "jpeg" | "png";
 type RequestQueryOptions = {
   image: string;
   type: OptionalType;
-  size: number;
+  k: number;
 };
 
 export type ParsedOptions = {
   image: string;
   type: OptionalType;
   size: number;
+  k: number;
 };
 
 const isOptionalType = (type: string): type is OptionalType => {
@@ -19,7 +20,7 @@ const isOptionalType = (type: string): type is OptionalType => {
 };
 
 export const parseRequest = (req: VercelRequest): ParsedOptions => {
-  const { image, type = "jpeg", size = "15" } = req.query;
+  const { image, type = "jpeg", size = "15", k = "8" } = req.query;
 
   if (Array.isArray(image)) throw new Error("must not be array");
   if (Array.isArray(size)) throw new Error("must not be array");
@@ -30,5 +31,6 @@ export const parseRequest = (req: VercelRequest): ParsedOptions => {
     image,
     type,
     size: Number(size),
+    k: Number(k),
   };
 };

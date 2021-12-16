@@ -2,6 +2,8 @@ import { VercelApiHandler } from "@vercel/node";
 import { createImage } from "./_lib/createImage";
 import { parseRequest } from "./_lib/parser";
 
+const CACHE_MAX_AGE = 60 * 60 * 24;
+
 const handler: VercelApiHandler = async (req, res) => {
   try {
     const options = parseRequest(req);

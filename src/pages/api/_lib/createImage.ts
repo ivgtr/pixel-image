@@ -1,5 +1,6 @@
 import { createCanvas, Image } from "canvas";
 import { analyzeImage } from "./analyzer";
+import { cluster } from "./cluster";
 import type { ParsedOptions } from "./parser";
 
 const cellSize = (a: number, b: number, size: number): number[] => {
@@ -12,6 +13,7 @@ const cellSize = (a: number, b: number, size: number): number[] => {
 export const createImage = async ({
   image,
   size,
+  k,
   ...options
 }: ParsedOptions): Promise<string | Buffer> => {
   // 画像のデータを取得
@@ -38,8 +40,8 @@ export const createImage = async ({
   const [rWidth, rHeight] = cellSize(width, height, size);
   const pixelData = pixelCtx.getImageData(0, 0, rWidth, rHeight);
 
-  // ピクセル化後の画像を格納する配列を作成
-  const uint8ClampedArray = [...Array(rWidth * rHeight * 4)].map(() => 0);
+  // RGBを格納する配列を作成
+  const rgbArray = [...Array(rWidth * rHeight)].map(() => [0, 0, 0]);
 
   for (let i = 0; i < rWidth; i++) {
     for (let j = 0; j < rHeight; j++) {
@@ -55,7 +57,19 @@ export const createImage = async ({
         avgB = ((avgB + cellData[k + 2]) / 2) | 0;
       }
 
-      pixelCtx.fillStyle = `rgb(${avgR}, ${avgG}, ${avgB})`;
+      rgbArray[i + j * rWidth] = [avgR, avgG, avgB];
+    }
+  }
+
+  const { clusters, mat } = cluster(rgbArray, k);
+  clusters.forEach((cluster, index) => {
+    rgbArray[index] = mat[cluster];
+  });
+
+  for (let i = 0; i < rWidth; i++) {
+    for (let j = 0; j < rHeight; j++) {
+      const [r, g, b] = rgbArray[i + j * rWidth];
+      pixelCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       pixelCtx.fillRect(i * size, j * size, size, size);
     }
   }
