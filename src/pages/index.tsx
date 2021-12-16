@@ -14,13 +14,15 @@ const HOST_URL =
 const defaultImageUrl =
   "https://pbs.twimg.com/profile_images/1354479643882004483/Btnfm47p_400x400.jpg";
 const defaultCellSize = "15";
+const defaultKSize = "8";
 const Home: NextPage = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>();
 
-  const handleImageUrl = useCallback((origUrl: string, size: string) => {
+  const handleImageUrl = useCallback((origUrl: string, size: string, k: string) => {
     const url = new URL(`${HOST_URL}/api`);
     url.searchParams.set("image", origUrl);
     url.searchParams.set("size", size);
+    url.searchParams.set("k", k);
     setImageUrl(url.toString());
   }, []);
 
@@ -47,6 +49,7 @@ const Home: NextPage = () => {
               handleImageUrl={handleImageUrl}
               defaultImageUrl={defaultImageUrl}
               defaultCellSize={defaultCellSize}
+              defaultKSize={defaultKSize}
             />
           </section>
         </main>

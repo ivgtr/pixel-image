@@ -7,13 +7,16 @@ export const Form = ({
   handleImageUrl,
   defaultImageUrl,
   defaultCellSize,
+  defaultKSize,
 }: {
-  handleImageUrl: (origUrl: string, size: string) => void;
+  handleImageUrl: (origUrl: string, size: string, k: string) => void;
   defaultImageUrl: string;
   defaultCellSize: string;
+  defaultKSize: string;
 }) => {
   const [imgUrl, setImgUrl] = useState<string>(defaultImageUrl);
   const [cellSize, setCellSize] = useState<string>(defaultCellSize);
+  const [kSize, setKSize] = useState<string>(defaultKSize);
 
   const handleOrigImageUrl = useCallback((origUrl: string) => {
     setImgUrl(origUrl);
@@ -22,13 +25,16 @@ export const Form = ({
   const handleCellSize = useCallback((cellSize: string) => {
     setCellSize(cellSize);
   }, []);
+  const handleKSize = useCallback((kSize: string) => {
+    setKSize(kSize);
+  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      handleImageUrl(imgUrl, cellSize);
+      handleImageUrl(imgUrl, cellSize, kSize);
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [imgUrl, cellSize, handleImageUrl]);
+  }, [imgUrl, cellSize, kSize, handleImageUrl]);
 
   return (
     <form className={classNames("inline-block", "w-full")}>
@@ -40,9 +46,15 @@ export const Form = ({
       </div>
       <div className={classNames("flex", "items-center", "w-full", "mt-4")}>
         <label htmlFor="cell-size" className={classNames("text-white", "px-4", "py-2")}>
-          Size
+          Cell-Size
         </label>
         <SizeInput handleChange={handleCellSize} value={defaultCellSize} id="cell-size" />
+      </div>
+      <div className={classNames("flex", "items-center", "w-full", "mt-4")}>
+        <label htmlFor="k-size" className={classNames("text-white", "px-4", "py-2")}>
+          K-Size
+        </label>
+        <SizeInput handleChange={handleKSize} value={defaultKSize} id="k-size" />
       </div>
     </form>
   );
