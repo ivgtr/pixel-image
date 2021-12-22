@@ -32,13 +32,12 @@ export const createImage = async ({
   img.onload = () => imageCtx.drawImage(img, 0, 0, width, height);
   img.src = base64Image;
 
-  // ピクセル化後の画像描画用のキャンバスを作成
-  const pixelCanvas = createCanvas(width, height);
-  const pixelCtx = pixelCanvas.getContext("2d");
-
-  // ピクセル化後の画像を描画
+  // 分割サイズを計算
   const [rWidth, rHeight] = cellSize(width, height, size);
-  const pixelData = pixelCtx.getImageData(0, 0, rWidth, rHeight);
+
+  // ピクセル化後の画像描画用のキャンバスを作成
+  const pixelCanvas = createCanvas(rHeight * size, rHeight * size);
+  const pixelCtx = pixelCanvas.getContext("2d");
 
   // RGBを格納する配列を作成
   const rgbArray = [...Array(rWidth * rHeight)].map(() => [0, 0, 0]);
