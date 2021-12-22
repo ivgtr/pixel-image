@@ -1,5 +1,9 @@
 const config = {
-  extends: ["next/core-web-vitals", "prettier"],
+  env: {
+    node: true,
+    browser: true,
+  },
+  extends: ["next", "next/core-web-vitals", "prettier"],
   rules: {
     "arrow-body-style": 0,
     "react/display-name": 0,

@@ -6,7 +6,9 @@
     "vercel-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && next build",
     "start": "next start",
     "format": "prettier -w \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"  \"./*.{js,jsx,ts,tsx,css,scss}\"",
-    "lint": "eslint ./src/**/*.tsx",
+    "lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
+    "lint:web": "eslint \"./src/**/*.{jsx,tsx,css,scss}\"",
+    "lint:api": "eslint \"./src/**/*.{js,ts}\"",
     "proxy": "ngrok http 3000"
   },
   "engines": {

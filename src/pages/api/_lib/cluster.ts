@@ -1,6 +1,6 @@
 // Generate RGB values
 const crateRGB = () => {
-  const rgb = [0, 0, 0];
+  const rgb: number[] = [0, 0, 0];
   rgb[0] = Math.floor(Math.random() * 256);
   rgb[1] = Math.floor(Math.random() * 256);
   rgb[2] = Math.floor(Math.random() * 256);
@@ -9,7 +9,7 @@ const crateRGB = () => {
 };
 // Generate an array of RGB values
 const createRGBArray = (num: number) => {
-  const arr = [];
+  const arr: number[][] = [];
   for (let i = 0; i < num; i++) {
     arr.push(crateRGB());
   }
@@ -17,7 +17,7 @@ const createRGBArray = (num: number) => {
 };
 
 // Calculate the distance between two points in three dimensions
-const distance = (point1: number[], point2: number[]) => {
+const getDistance = (point1: number[], point2: number[]) => {
   const x = point1[0] - point2[0];
   const y = point1[1] - point2[1];
   const z = point1[2] - point2[2];
@@ -31,9 +31,9 @@ const MAX_ITER = 1000;
 export const cluster = (data: number[][], k: number) => {
   const mat = createRGBArray(k);
   const clusters = [...Array(data.length)].map(() => 0);
-  let prevClusters = [];
-  let changed = true;
-  let iter = 0;
+  let prevClusters: number[] = [];
+  let changed: boolean = true;
+  let iter: number = 0;
 
   while (changed && iter < MAX_ITER) {
     changed = false;
@@ -43,7 +43,7 @@ export const cluster = (data: number[][], k: number) => {
       let minIndex = 0;
 
       for (let j = 0; j < mat.length; j++) {
-        const tmp = distance(data[i], mat[j]);
+        const tmp = getDistance(data[i], mat[j]);
         if (tmp < min) {
           min = tmp;
           minIndex = j;
