@@ -31,10 +31,19 @@ Markdown ファイルにも C&P して利用できます。
   - 画像の URL を指定
   - `required`
 - `?size=`
-  - cell のサイズを`px`で指定
+  - 後方互換用。`sampleSize` と `pixelSize` の両方に同じ値を指定したものとして扱います。
   - `default: 15`
+- `?sampleSize=`
+  - 元画像を何px単位で代表色化するかを指定
+  - 小さいほど細部を拾いやすくなります
+  - `default: size` または `15`
+- `?pixelSize=`
+  - 出力時の1ドットを何pxで描画するかを指定
+  - 大きいほど粗く大きなドットになります
+  - `default: size` または `15`
 - `?k=`
-  - カラーの色数を指定
+  - palette の色数を指定
+  - UI上では Palette Size として扱います
   - `default: 8`
 - `?tv=`
   - TV表示再現エフェクトを有効化
@@ -51,13 +60,19 @@ Markdown ファイルにも C&P して利用できます。
   - `default: 60`
 
 ```md
-https://pixel-image.vercel.app/api?<url=画像の URL>&[size=cell のサイズ]&[k=カラーの色数]&[tv=0 or 1]&[tvPreset=プリセット]&[tvStrength=強さ]
+https://pixel-image.vercel.app/api?<url=画像の URL>&[sampleSize=元画像の読み取り単位]&[pixelSize=出力時の1ドットの大きさ]&[k=palette の色数]&[tv=0 or 1]&[tvPreset=プリセット]&[tvStrength=強さ]
+```
+
+`sampleSize` と `pixelSize` を分けると、出力画像サイズは `pixelSize` に従います。例えば元画像が `400x400`、`sampleSize=10`、`pixelSize=20` の場合、`40 cells * 20px = 800px` となり、出力画像は `800x800` になります。
+
+```md
+https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png&sampleSize=10&pixelSize=20&k=8
 ```
 
 TV表示再現エフェクトの例。
 
 ```md
-https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png&size=15&k=8&tv=1&tvPreset=soft-tv&tvStrength=60
+https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png&sampleSize=15&pixelSize=15&k=8&tv=1&tvPreset=soft-tv&tvStrength=60
 ```
 
 ## Demo
