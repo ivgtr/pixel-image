@@ -1,7 +1,18 @@
 import classNames from "classnames";
 import React, { useCallback, useEffect, useState } from "react";
+import type { TvEffectPreset } from "../../../server/pixelImage/tvEffect/types";
 import { Input } from "../../atoms/Input";
 import { SizeInput } from "../../molecules/SizeInput";
+import { TvEffectControls } from "../../molecules/TvEffectControls";
+
+export type ImageFormOptions = {
+  imageUrl: string;
+  cellSize: string;
+  kSize: string;
+  tvEffectEnabled: boolean;
+  tvEffectPreset: TvEffectPreset;
+  tvEffectStrength: string;
+};
 
 export const Form = ({
   handleImageUrl,
@@ -9,7 +20,7 @@ export const Form = ({
   defaultCellSize,
   defaultKSize,
 }: {
-  handleImageUrl: (origUrl: string, size: string, k: string) => void;
+  handleImageUrl: (options: ImageFormOptions) => void;
   defaultImageUrl: string;
   defaultCellSize: string;
   defaultKSize: string;
@@ -17,6 +28,9 @@ export const Form = ({
   const [imgUrl, setImgUrl] = useState<string>(defaultImageUrl);
   const [cellSize, setCellSize] = useState<string>(defaultCellSize);
   const [kSize, setKSize] = useState<string>(defaultKSize);
+  const [tvEffectEnabled, setTvEffectEnabled] = useState<boolean>(false);
+  const [tvEffectPreset, setTvEffectPreset] = useState<TvEffectPreset>("soft-tv");
+  const [tvEffectStrength, setTvEffectStrength] = useState<string>("60");
 
   const handleOrigImageUrl = useCallback((origUrl: string) => {
     setImgUrl(origUrl);
@@ -31,10 +45,25 @@ export const Form = ({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      handleImageUrl(imgUrl, cellSize, kSize);
+      handleImageUrl({
+        imageUrl: imgUrl,
+        cellSize,
+        kSize,
+        tvEffectEnabled,
+        tvEffectPreset,
+        tvEffectStrength,
+      });
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [imgUrl, cellSize, kSize, handleImageUrl]);
+  }, [
+    imgUrl,
+    cellSize,
+    kSize,
+    tvEffectEnabled,
+    tvEffectPreset,
+    tvEffectStrength,
+    handleImageUrl,
+  ]);
 
   return (
     <form className={classNames("inline-block", "w-full")}>
@@ -56,6 +85,14 @@ export const Form = ({
         </label>
         <SizeInput handleChange={handleKSize} value={defaultKSize} id="k-size" />
       </div>
+      <TvEffectControls
+        enabled={tvEffectEnabled}
+        preset={tvEffectPreset}
+        strength={tvEffectStrength}
+        onEnabledChange={setTvEffectEnabled}
+        onPresetChange={setTvEffectPreset}
+        onStrengthChange={setTvEffectStrength}
+      />
     </form>
   );
 };

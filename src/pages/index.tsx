@@ -2,6 +2,7 @@ import classNames from "classnames";
 import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useCallback, useState } from "react";
+import type { ImageFormOptions } from "../components/organisms/Form";
 import { Form } from "../components/organisms/Form";
 import { Preview } from "../components/organisms/Preview";
 import { DefaultLayout } from "../layouts/DefaultLayout";
@@ -18,11 +19,14 @@ const defaultKSize = "8";
 const Home: NextPage = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>();
 
-  const handleImageUrl = useCallback((origUrl: string, size: string, k: string) => {
+  const handleImageUrl = useCallback((options: ImageFormOptions) => {
     const url = new URL(`${HOST_URL}/api`);
-    url.searchParams.set("image", origUrl);
-    url.searchParams.set("size", size);
-    url.searchParams.set("k", k);
+    url.searchParams.set("image", options.imageUrl);
+    url.searchParams.set("size", options.cellSize);
+    url.searchParams.set("k", options.kSize);
+    url.searchParams.set("tv", options.tvEffectEnabled ? "1" : "0");
+    url.searchParams.set("tvPreset", options.tvEffectPreset);
+    url.searchParams.set("tvStrength", options.tvEffectStrength);
     setImageUrl(url.toString());
   }, []);
 

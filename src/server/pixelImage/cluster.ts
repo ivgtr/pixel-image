@@ -1,21 +1,3 @@
-// Generate RGB values
-const crateRGB = () => {
-  const rgb: number[] = [0, 0, 0];
-  rgb[0] = Math.floor(Math.random() * 256);
-  rgb[1] = Math.floor(Math.random() * 256);
-  rgb[2] = Math.floor(Math.random() * 256);
-
-  return rgb;
-};
-// Generate an array of RGB values
-const createRGBArray = (num: number) => {
-  const arr: number[][] = [];
-  for (let i = 0; i < num; i++) {
-    arr.push(crateRGB());
-  }
-  return arr;
-};
-
 // Calculate the distance between two points in three dimensions
 const getDistance = (point1: number[], point2: number[]) => {
   const x = point1[0] - point2[0];
@@ -27,9 +9,18 @@ const getDistance = (point1: number[], point2: number[]) => {
 
 const MAX_ITER = 1000;
 
+const createInitialCentroids = (data: number[][], k: number): number[][] => {
+  if (data.length === 0) return [];
+
+  return [...Array(k)].map((_, index) => {
+    const dataIndex = Math.floor((index * data.length) / k);
+    return [...data[Math.min(dataIndex, data.length - 1)]];
+  });
+};
+
 // Process the received data based on the k-means method
 export const cluster = (data: number[][], k: number) => {
-  const mat = createRGBArray(k);
+  const mat = createInitialCentroids(data, k);
   const clusters = [...Array(data.length)].map(() => 0);
   let prevClusters: number[] = [];
   let changed: boolean = true;
@@ -54,13 +45,22 @@ export const cluster = (data: number[][], k: number) => {
 
     for (let i = 0; i < mat.length; i++) {
       const points = data.filter((_, index) => clusters[index] === i);
-      const [r, g, b] = points.reduce((point, acc) => {
-        acc[0] = ((acc[0] + point[0]) / 2) | 0;
-        acc[1] = ((acc[1] + point[1]) / 2) | 0;
-        acc[2] = ((acc[2] + point[2]) / 2) | 0;
-        return acc;
-      }, mat[i]);
-      mat[i] = [r, g, b];
+      if (points.length === 0) continue;
+
+      const [r, g, b] = points.reduce(
+        (acc, point) => {
+          acc[0] += point[0];
+          acc[1] += point[1];
+          acc[2] += point[2];
+          return acc;
+        },
+        [0, 0, 0],
+      );
+      mat[i] = [
+        Math.round(r / points.length),
+        Math.round(g / points.length),
+        Math.round(b / points.length),
+      ];
     }
 
     if (prevClusters.join("") !== clusters.join("")) {

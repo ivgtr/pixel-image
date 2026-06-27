@@ -2,10 +2,11 @@ import { createCanvas, loadImage } from "canvas";
 import { analyzeImage } from "./analyzer";
 import { cluster } from "./cluster";
 import type { ParsedOptions } from "./parser";
+import { applyTvEffect } from "./tvEffect/applyTvEffect";
 
-const cellSize = (a: number, b: number, size: number): number[] => {
-  const rA = (a / size) | 0;
-  const rB = (b / size) | 0;
+const cellSize = (a: number, b: number, size: number): [number, number] => {
+  const rA = Math.ceil(a / size);
+  const rB = Math.ceil(b / size);
 
   return [rA, rB];
 };
@@ -32,7 +33,7 @@ export const createImage = async ({
   const [rWidth, rHeight] = cellSize(width, height, size);
 
   // ピクセル化後の画像描画用のキャンバスを作成
-  const pixelCanvas = createCanvas(rHeight * size, rHeight * size);
+  const pixelCanvas = createCanvas(rWidth * size, rHeight * size);
   const pixelCtx = pixelCanvas.getContext("2d");
 
   // RGBを格納する配列を作成
@@ -40,19 +41,27 @@ export const createImage = async ({
 
   for (let i = 0; i < rWidth; i++) {
     for (let j = 0; j < rHeight; j++) {
-      const cell = imageCtx.getImageData(i * size, j * size, size, size);
+      const cellWidth = Math.min(size, width - i * size);
+      const cellHeight = Math.min(size, height - j * size);
+      const cell = imageCtx.getImageData(i * size, j * size, cellWidth, cellHeight);
       const cellData = cell.data;
       let avgR = 0;
       let avgG = 0;
       let avgB = 0;
+      let count = 0;
 
-      for (let k = 0; k < size * size * 4; k += 4) {
-        avgR = ((avgR + cellData[k]) / 2) | 0;
-        avgG = ((avgG + cellData[k + 1]) / 2) | 0;
-        avgB = ((avgB + cellData[k + 2]) / 2) | 0;
+      for (let k = 0; k < cellData.length; k += 4) {
+        avgR += cellData[k];
+        avgG += cellData[k + 1];
+        avgB += cellData[k + 2];
+        count++;
       }
 
-      rgbArray[i + j * rWidth] = [avgR, avgG, avgB];
+      rgbArray[i + j * rWidth] = [
+        Math.round(avgR / count),
+        Math.round(avgG / count),
+        Math.round(avgB / count),
+      ];
     }
   }
 
@@ -67,6 +76,15 @@ export const createImage = async ({
       pixelCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
       pixelCtx.fillRect(i * size, j * size, size, size);
     }
+  }
+
+  if (options.tvEffect.enabled) {
+    applyTvEffect({
+      ctx: pixelCtx,
+      width: pixelCanvas.width,
+      height: pixelCanvas.height,
+      params: options.tvEffect.params,
+    });
   }
 
   let buffer: Buffer;
