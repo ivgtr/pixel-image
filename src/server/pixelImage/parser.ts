@@ -9,7 +9,13 @@ export type OptionalType = "jpeg" | "png";
 export type ParsedOptions = {
   image: string;
   type: OptionalType;
+  /**
+   * Backward compatible input value. Runtime image generation should use
+   * sampleSize and pixelSize instead.
+   */
   size: number;
+  sampleSize: number;
+  pixelSize: number;
   k: number;
   tvEffect: TvEffectOptions;
 };
@@ -42,6 +48,8 @@ export const parseRequest = (req: NextApiRequest): ParsedOptions => {
     image,
     type = "jpeg",
     size = "15",
+    sampleSize,
+    pixelSize,
     k = "8",
     tv = "0",
     tvPreset = "soft-tv",
@@ -50,6 +58,8 @@ export const parseRequest = (req: NextApiRequest): ParsedOptions => {
 
   if (Array.isArray(image)) throw new BadRequestError("must not be array");
   if (Array.isArray(size)) throw new BadRequestError("must not be array");
+  if (Array.isArray(sampleSize)) throw new BadRequestError("must not be array");
+  if (Array.isArray(pixelSize)) throw new BadRequestError("must not be array");
   if (Array.isArray(type)) throw new BadRequestError("must not be array");
   if (Array.isArray(k)) throw new BadRequestError("must not be array");
   if (Array.isArray(tv)) throw new BadRequestError("must not be array");
@@ -57,15 +67,21 @@ export const parseRequest = (req: NextApiRequest): ParsedOptions => {
   if (Array.isArray(tvStrength)) throw new BadRequestError("must not be array");
   if (!image) throw new BadRequestError("image is required");
   if (!isOptionalType(type)) throw new BadRequestError("type must be jpeg or png");
+
   const tvEnabled = parseTvEnabled(tv);
   const parsedSize = parseInteger(size, "size", 1, 50);
+  const parsedSampleSize = parseInteger(sampleSize ?? size, "sampleSize", 1, 50);
+  const parsedPixelSize = parseInteger(pixelSize ?? size, "pixelSize", 1, 50);
+  const parsedK = parseInteger(k, "k", 1, 50);
 
   if (!tvEnabled) {
     return {
       image,
       type,
       size: parsedSize,
-      k: parseInteger(k, "k", 1, 50),
+      sampleSize: parsedSampleSize,
+      pixelSize: parsedPixelSize,
+      k: parsedK,
       tvEffect: createTvEffectOptions({ enabled: false }),
     };
   }
@@ -82,12 +98,14 @@ export const parseRequest = (req: NextApiRequest): ParsedOptions => {
     image,
     type,
     size: parsedSize,
-    k: parseInteger(k, "k", 1, 50),
+    sampleSize: parsedSampleSize,
+    pixelSize: parsedPixelSize,
+    k: parsedK,
     tvEffect: createTvEffectOptions({
       enabled: true,
       preset: tvPreset,
       strength,
-      cellSize: parsedSize,
+      cellSize: parsedPixelSize,
     }),
   };
 };
