@@ -23,6 +23,11 @@ type ParameterField = {
   onValueChange: (value: string) => void;
 };
 
+const sizeRelationshipDescription =
+  "Sample Sizeで元画像をいくつのマスに分けるかを決め、Pixel Sizeでその1マスを出力時に何px四方で描くかを決めます。";
+const outputSizeDescription =
+  "出力幅の目安: ceil(元画像幅 / Sample Size) × Pixel Size";
+
 export const Form = ({
   handleImageUrl,
   defaultImageUrl,
@@ -86,14 +91,14 @@ export const Form = ({
     {
       id: "sample-size",
       label: "Sample Size",
-      description: "元画像を何px単位で読み取るか。小さいほど細部を拾いやすい。",
+      description: "入力の細かさ。小さいほど多くのマスに分けて細部を拾う。",
       defaultValue: defaultSampleSize,
       onValueChange: handleSampleSize,
     },
     {
       id: "pixel-size",
       label: "Pixel Size",
-      description: "出力画像の1ドットを何pxで描くか。大きいほど粗く大きなドットになる。",
+      description: "出力の拡大率。Sample Sizeで作った1マスを何px四方で描くか。",
       defaultValue: defaultPixelSize,
       onValueChange: handlePixelSize,
     },
@@ -113,6 +118,10 @@ export const Form = ({
           URL
         </label>
         <Input handleChange={handleOrigImageUrl} value={imgUrl} id="image-url" />
+      </div>
+      <div className={classNames("mt-4", "px-4", "py-3", "text-sm", "text-gray-200")}>
+        <p>{sizeRelationshipDescription}</p>
+        <p className={classNames("mt-1", "text-xs", "text-gray-300")}>{outputSizeDescription}</p>
       </div>
       {parameterFields.map(({ id, label, description, defaultValue, onValueChange }) => {
         const descriptionId = `${id}-description`;
