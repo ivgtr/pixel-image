@@ -1,10 +1,10 @@
-import { VercelApiHandler } from "@vercel/node";
+import type { NextApiHandler } from "next";
 import { createImage } from "./_lib/createImage";
 import { parseRequest } from "./_lib/parser";
 
 const CACHE_MAX_AGE = 60 * 60 * 24;
 
-const handler: VercelApiHandler = async (req, res) => {
+const handler: NextApiHandler = async (req, res) => {
   try {
     const options = parseRequest(req);
     const image = await createImage(options);

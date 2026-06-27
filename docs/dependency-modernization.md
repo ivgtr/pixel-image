@@ -61,3 +61,26 @@ Do not perform one large blind dependency bump. Split the work:
 ## Proposed First Implementation Target
 
 Start with the image pipeline, not the framework. Removing `canvas@2.6.1`, `axios@0.24.0`, and `image-size@1.0.0` attacks the Vercel deployment blocker and the most exposed server-side risks while keeping the UI stable. After that, upgrade Next/React on a cleaner base.
+
+## Implemented in This PR
+
+- Set `engines.node` to `24.x`, matching Vercel's current default Node.js major.
+- Migrated from Yarn lockfile to npm lockfile.
+- Removed `axios` and replaced the API image fetch with native `fetch`.
+- Removed `image-size`; image dimensions now come from `canvas.loadImage`.
+- Updated `canvas` from `2.6.1` to `3.2.3`.
+- Removed the Vercel-specific `yum install`/manual `.so` copy build script.
+- Replaced `@vercel/node` API types with Next.js API route types and removed `@vercel/node`.
+- Added `build`, `typecheck`, and `audit` npm scripts.
+
+Validation:
+
+- `npm run typecheck`: passed.
+- `npm run lint`: passed with the existing `@next/next/no-img-element` warning in `src/components/organisms/Preview/index.tsx`.
+- `npm run build`: passed with the same image warning and Browserslist freshness warnings.
+- `node -e \"const canvas = require('canvas'); console.log(canvas.version);\"`: loaded `canvas@3.2.3`.
+
+Remaining risk:
+
+- `npm audit --omit=dev` still reports vulnerabilities largely rooted in `next@12.0.7` and its old build/runtime dependency tree. Fixing those requires the next major step: Next/React migration.
+- URL validation now rejects non-HTTP(S), enforces content type, timeout, and a 5 MB byte cap, but it does not yet block private IP ranges or redirect-to-private SSRF paths. Add network-level SSRF hardening before considering arbitrary external URLs fully safe.
