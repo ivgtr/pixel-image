@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "vercel-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && next build",
+    "vercel-build": "next build",
     "start": "next start",
     "format": "prettier -w \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"  \"./*.{js,jsx,ts,tsx,css,scss}\"",
     "lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
@@ -12,11 +12,11 @@
     "proxy": "ngrok http 3000"
   },
   "engines": {
-    "node": "24.x"
+    "node": "22.x"
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "canvas": "2.6.1",
+    "canvas": "3.2.3",
     "classnames": "^2.3.1",
     "image-size": "^1.0.0",
     "next": "12.0.7",
