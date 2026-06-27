@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { analyzeImage } from "../../src/server/pixelImage/analyzer";
 import { createImage } from "../../src/server/pixelImage/createImage";
 import { createTvEffectOptions } from "../../src/server/pixelImage/tvEffect/presets";
+import type { TvEffectPreset } from "../../src/server/pixelImage/tvEffect/types";
 
 vi.mock("../../src/server/pixelImage/analyzer", () => ({
   analyzeImage: vi.fn(),
@@ -30,16 +31,18 @@ const createOptions = ({
   size,
   k = 2,
   tv = false,
+  preset = "soft-tv",
 }: {
   size: number;
   k?: number;
   tv?: boolean;
+  preset?: TvEffectPreset;
 }) => ({
   image: "https://example.com/image.png",
   type: "png" as const,
   size,
   k,
-  tvEffect: createTvEffectOptions({ enabled: tv }),
+  tvEffect: createTvEffectOptions({ enabled: tv, preset, cellSize: size }),
 });
 
 describe("createImage", () => {
@@ -94,5 +97,14 @@ describe("createImage", () => {
     const second = await createImage(createOptions({ size: 10, k: 2 }));
 
     expect(Buffer.compare(first as Buffer, second as Buffer)).toBe(0);
+  });
+
+  it("ignores tv effect preset when tv effect is disabled", async () => {
+    mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
+
+    const softTv = await createImage(createOptions({ size: 10, tv: false, preset: "soft-tv" }));
+    const crt = await createImage(createOptions({ size: 10, tv: false, preset: "crt" }));
+
+    expect(Buffer.compare(softTv as Buffer, crt as Buffer)).toBe(0);
   });
 });

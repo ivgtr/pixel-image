@@ -57,13 +57,25 @@ export const parseRequest = (req: NextApiRequest): ParsedOptions => {
   if (Array.isArray(tvStrength)) throw new BadRequestError("must not be array");
   if (!image) throw new BadRequestError("image is required");
   if (!isOptionalType(type)) throw new BadRequestError("type must be jpeg or png");
+  const tvEnabled = parseTvEnabled(tv);
+  const parsedSize = parseInteger(size, "size", 1, 50);
+
+  if (!tvEnabled) {
+    return {
+      image,
+      type,
+      size: parsedSize,
+      k: parseInteger(k, "k", 1, 50),
+      tvEffect: createTvEffectOptions({ enabled: false }),
+    };
+  }
+
   if (!isTvEffectPreset(tvPreset)) {
     throw new BadRequestError(
       "tvPreset must be soft-tv, ntsc, crt, famicom-composite, or sharp-emulator",
     );
   }
 
-  const parsedSize = parseInteger(size, "size", 1, 50);
   const strength = parseInteger(tvStrength, "tvStrength", 0, 100);
 
   return {
@@ -72,7 +84,7 @@ export const parseRequest = (req: NextApiRequest): ParsedOptions => {
     size: parsedSize,
     k: parseInteger(k, "k", 1, 50),
     tvEffect: createTvEffectOptions({
-      enabled: parseTvEnabled(tv),
+      enabled: true,
       preset: tvPreset,
       strength,
       cellSize: parsedSize,

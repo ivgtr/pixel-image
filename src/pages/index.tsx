@@ -25,8 +25,10 @@ const Home: NextPage = () => {
     url.searchParams.set("size", options.cellSize);
     url.searchParams.set("k", options.kSize);
     url.searchParams.set("tv", options.tvEffectEnabled ? "1" : "0");
-    url.searchParams.set("tvPreset", options.tvEffectPreset);
-    url.searchParams.set("tvStrength", options.tvEffectStrength);
+    if (options.tvEffectEnabled) {
+      url.searchParams.set("tvPreset", options.tvEffectPreset);
+      url.searchParams.set("tvStrength", options.tvEffectStrength);
+    }
     setImageUrl(url.toString());
   }, []);
 

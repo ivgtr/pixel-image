@@ -75,11 +75,40 @@ describe("parseRequest", () => {
     ).toThrow("tv must be 0 or 1");
     expect(() =>
       parseRequest(
-        requestWithQuery({ image: "https://example.com/image.png", tvPreset: "warm-tv" }),
+        requestWithQuery({
+          image: "https://example.com/image.png",
+          tv: "1",
+          tvPreset: "warm-tv",
+        }),
       ),
     ).toThrow("tvPreset must be soft-tv");
     expect(() =>
-      parseRequest(requestWithQuery({ image: "https://example.com/image.png", tvStrength: "101" })),
+      parseRequest(
+        requestWithQuery({
+          image: "https://example.com/image.png",
+          tv: "1",
+          tvStrength: "101",
+        }),
+      ),
     ).toThrow("tvStrength must be between 0 and 100");
+  });
+
+  it("ignores tv effect preset and strength when tv is disabled", () => {
+    expect(
+      parseRequest(
+        requestWithQuery({
+          image: "https://example.com/image.png",
+          tv: "0",
+          tvPreset: "crt",
+          tvStrength: "100",
+        }),
+      ).tvEffect,
+    ).toEqual(
+      expect.objectContaining({
+        enabled: false,
+        preset: "soft-tv",
+        strength: DEFAULT_TV_EFFECT_STRENGTH,
+      }),
+    );
   });
 });
