@@ -9,17 +9,25 @@ const getDistance = (point1: number[], point2: number[]) => {
 
 const MAX_ITER = 1000;
 
+type RgbColor = [number, number, number];
+
 type ColorBucket = {
   key: string;
-  point: number[];
+  color: RgbColor;
   count: number;
 };
+
+const toRgbColor = (point: number[]): RgbColor => [
+  point[0] ?? 0,
+  point[1] ?? 0,
+  point[2] ?? 0,
+];
 
 const toColorKey = (point: number[]) => point.join(",");
 
 const compareColorBuckets = (a: ColorBucket, b: ColorBucket) => {
-  for (let i = 0; i < a.point.length; i++) {
-    const diff = a.point[i] - b.point[i];
+  for (let i = 0; i < a.color.length; i++) {
+    const diff = a.color[i] - b.color[i];
     if (diff !== 0) return diff;
   }
 
@@ -39,7 +47,7 @@ const summarizeColors = (data: number[][]): ColorBucket[] => {
 
     buckets.set(key, {
       key,
-      point: [...point],
+      color: toRgbColor(point),
       count: 1,
     });
   });
@@ -47,29 +55,35 @@ const summarizeColors = (data: number[][]): ColorBucket[] => {
   return Array.from(buckets.values()).sort(compareColorBuckets);
 };
 
-const getWeightedMean = (buckets: ColorBucket[]): number[] => {
+const getWeightedMean = (buckets: ColorBucket[]): RgbColor => {
   const [r, g, b, count] = buckets.reduce(
     (acc, bucket) => {
-      acc[0] += bucket.point[0] * bucket.count;
-      acc[1] += bucket.point[1] * bucket.count;
-      acc[2] += bucket.point[2] * bucket.count;
+      acc[0] += bucket.color[0] * bucket.count;
+      acc[1] += bucket.color[1] * bucket.count;
+      acc[2] += bucket.color[2] * bucket.count;
       acc[3] += bucket.count;
       return acc;
     },
     [0, 0, 0, 0],
   );
 
+  if (count === 0) return [0, 0, 0];
+
   return [Math.round(r / count), Math.round(g / count), Math.round(b / count)];
 };
 
-const createInitialCentroids = (data: number[][], k: number): number[][] => {
-  if (data.length === 0 || k <= 0) return [];
+const createInitialCentroids = (
+  buckets: ColorBucket[],
+  k: number,
+): RgbColor[] => {
+  if (buckets.length === 0 || k <= 0) return [];
 
-  const buckets = summarizeColors(data);
-  if (buckets.length <= k) return buckets.map(({ point }) => [...point]);
+  const effectiveK = Math.min(k, buckets.length);
+  if (buckets.length <= effectiveK)
+    return buckets.map(({ color }) => [...color]);
 
   const weightedMean = getWeightedMean(buckets);
-  const centroids = [weightedMean];
+  const centroids: RgbColor[] = [weightedMean];
   const selectedKeys = new Set<string>();
   const weightedMeanKey = toColorKey(weightedMean);
 
@@ -77,7 +91,7 @@ const createInitialCentroids = (data: number[][], k: number): number[][] => {
     selectedKeys.add(weightedMeanKey);
   }
 
-  while (centroids.length < k && selectedKeys.size < buckets.length) {
+  while (centroids.length < effectiveK && selectedKeys.size < buckets.length) {
     let bestBucket: ColorBucket | undefined;
     let bestScore = -Infinity;
 
@@ -85,7 +99,7 @@ const createInitialCentroids = (data: number[][], k: number): number[][] => {
       if (selectedKeys.has(bucket.key)) return;
 
       const minDistance = Math.min(
-        ...centroids.map((centroid) => getDistance(bucket.point, centroid)),
+        ...centroids.map((centroid) => getDistance(bucket.color, centroid)),
       );
       const score = minDistance * Math.max(1, Math.log2(bucket.count + 1));
 
@@ -97,11 +111,50 @@ const createInitialCentroids = (data: number[][], k: number): number[][] => {
 
     if (!bestBucket) break;
 
-    centroids.push([...bestBucket.point]);
+    centroids.push([...bestBucket.color]);
     selectedKeys.add(bestBucket.key);
   }
 
   return centroids;
+};
+
+const getNearestCentroidIndex = (point: number[], centroids: number[][]) => {
+  let min = Infinity;
+  let minIndex = 0;
+
+  for (let i = 0; i < centroids.length; i++) {
+    const tmp = getDistance(point, centroids[i]);
+    if (tmp < min) {
+      min = tmp;
+      minIndex = i;
+    }
+  }
+
+  return minIndex;
+};
+
+const assignBucketsToCentroids = (
+  buckets: ColorBucket[],
+  centroids: RgbColor[],
+) => {
+  return buckets.map((bucket) =>
+    getNearestCentroidIndex(bucket.color, centroids),
+  );
+};
+
+const updateCentroids = (
+  buckets: ColorBucket[],
+  clusters: number[],
+  centroids: RgbColor[],
+): RgbColor[] => {
+  return centroids.map((centroid, centroidIndex) => {
+    const assignedBuckets = buckets.filter(
+      (_, index) => clusters[index] === centroidIndex,
+    );
+    if (assignedBuckets.length === 0) return centroid;
+
+    return getWeightedMean(assignedBuckets);
+  });
 };
 
 const isSameClusters = (clusters: number[], prevClusters: number[]) => {
@@ -111,57 +164,53 @@ const isSameClusters = (clusters: number[], prevClusters: number[]) => {
   );
 };
 
+const isSameCentroids = (centroids: RgbColor[], prevCentroids: RgbColor[]) => {
+  return (
+    centroids.length === prevCentroids.length &&
+    centroids.every(
+      (centroid, index) => getDistance(centroid, prevCentroids[index]) === 0,
+    )
+  );
+};
+
 // Process the received data based on the k-means method
 export const cluster = (data: number[][], k: number) => {
-  const mat = createInitialCentroids(data, k);
-  const clusters = [...Array(data.length)].map(() => 0);
-  let prevClusters: number[] = [];
+  const buckets = summarizeColors(data);
+  let mat = createInitialCentroids(buckets, k);
+
+  if (mat.length === 0) {
+    return { clusters: [...Array(data.length)].map(() => 0), mat };
+  }
+
+  let bucketClusters: number[] = [];
   let changed: boolean = true;
   let iter: number = 0;
 
   while (changed && iter < MAX_ITER) {
-    changed = false;
-    prevClusters = [...clusters];
-    for (let i = 0; i < data.length; i++) {
-      let min = Infinity;
-      let minIndex = 0;
+    const nextBucketClusters = assignBucketsToCentroids(buckets, mat);
+    const prevMat = mat.map((centroid) => [...centroid] as RgbColor);
+    const nextMat = updateCentroids(buckets, nextBucketClusters, mat);
 
-      for (let j = 0; j < mat.length; j++) {
-        const tmp = getDistance(data[i], mat[j]);
-        if (tmp < min) {
-          min = tmp;
-          minIndex = j;
-        }
-      }
-      clusters[i] = minIndex;
-    }
-
-    for (let i = 0; i < mat.length; i++) {
-      const points = data.filter((_, index) => clusters[index] === i);
-      if (points.length === 0) continue;
-
-      const [r, g, b] = points.reduce(
-        (acc, point) => {
-          acc[0] += point[0];
-          acc[1] += point[1];
-          acc[2] += point[2];
-          return acc;
-        },
-        [0, 0, 0],
-      );
-      mat[i] = [
-        Math.round(r / points.length),
-        Math.round(g / points.length),
-        Math.round(b / points.length),
-      ];
-    }
-
-    if (!isSameClusters(clusters, prevClusters)) {
-      changed = true;
-    }
+    changed =
+      !isSameClusters(nextBucketClusters, bucketClusters) ||
+      !isSameCentroids(nextMat, prevMat);
+    bucketClusters = nextBucketClusters;
+    mat = nextMat;
 
     iter++;
   }
+
+  const finalBucketClusters = assignBucketsToCentroids(buckets, mat);
+  const clusterByKey = new Map<string, number>();
+  buckets.forEach((bucket, index) => {
+    clusterByKey.set(bucket.key, finalBucketClusters[index]);
+  });
+
+  const clusters = data.map((point) => {
+    return (
+      clusterByKey.get(toColorKey(point)) ?? getNearestCentroidIndex(point, mat)
+    );
+  });
 
   return { clusters, mat };
 };
