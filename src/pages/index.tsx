@@ -7,11 +7,6 @@ import { Form } from "../components/organisms/Form";
 import { Preview } from "../components/organisms/Preview";
 import { DefaultLayout } from "../layouts/DefaultLayout";
 
-const HOST_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : "https://pixel-image.vercel.app";
-
 const defaultImageUrl =
   "https://pbs.twimg.com/profile_images/1354479643882004483/Btnfm47p_400x400.jpg";
 const defaultSampleSize = "15";
@@ -21,7 +16,7 @@ const Home: NextPage = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>();
 
   const handleImageUrl = useCallback((options: ImageFormOptions) => {
-    const url = new URL(`${HOST_URL}/api`);
+    const url = new URL("/api", window.location.origin);
     url.searchParams.set("image", options.imageUrl);
     url.searchParams.set("sampleSize", options.sampleSize);
     url.searchParams.set("pixelSize", options.pixelSize);
