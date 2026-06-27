@@ -43,7 +43,7 @@ export const applyHorizontalBleed = ({
 }: PixelBufferInput): Uint8ClampedArray => {
   const output = new Uint8ClampedArray(data);
   const radius = Math.round(clamp(params.bleedRadius, 0, 24));
-  const strength = clamp(params.bleedStrength || params.horizontalBleed, 0, 1);
+  const strength = clamp(params.bleedStrength, 0, 1);
   if (radius === 0 || strength === 0) return output;
 
   for (let y = 0; y < height; y++) {

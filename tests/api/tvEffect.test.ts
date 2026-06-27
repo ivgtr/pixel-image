@@ -78,6 +78,21 @@ describe("tvEffect image operations", () => {
     expect(output[17]).toBe(200);
   });
 
+  it("does not bleed when bleedStrength is explicitly zero", () => {
+    const data = new Uint8ClampedArray([
+      0, 0, 0, 255, 100, 0, 0, 255, 200, 0, 0, 255,
+    ]);
+
+    const output = applyHorizontalBleed({
+      data,
+      width: 3,
+      height: 1,
+      params: { ...baseParams, horizontalBleed: 1, bleedStrength: 0 },
+    });
+
+    expect(output).toEqual(data);
+  });
+
   it("shifts red and blue channels by configured offsets", () => {
     const data = new Uint8ClampedArray([
       10, 0, 100, 255, 20, 0, 150, 255, 30, 0, 200, 255,

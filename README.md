@@ -42,10 +42,12 @@ Markdown ファイルにも C&P して利用できます。
   - `default: 0`
 - `?tvPreset=`
   - TV表示再現エフェクトのプリセットを指定
+  - `tv=1` のときのみ有効
   - `soft-tv`, `ntsc`, `crt`, `famicom-composite`, `sharp-emulator`
   - `default: soft-tv`
 - `?tvStrength=`
   - TV表示再現エフェクトの強さを `0` から `100` で指定
+  - `tv=1` のときのみ有効
   - `default: 60`
 
 ```md
