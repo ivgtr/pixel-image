@@ -1,6 +1,6 @@
 import type { NextApiHandler } from "next";
-import { createImage } from "./_lib/createImage";
-import { parseRequest } from "./_lib/parser";
+import { createImage } from "../../server/pixelImage/createImage";
+import { parseRequest } from "../../server/pixelImage/parser";
 
 const CACHE_MAX_AGE = 60 * 60 * 24;
 
