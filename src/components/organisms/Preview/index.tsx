@@ -5,13 +5,12 @@ import React from "react";
 
 export const Preview = ({ imageUrl }: { imageUrl: string | undefined }) => {
   return (
-    <div className={classNames("relative", "w-full", "h-72", "mt-12", "overflow-auto")}>
+    <div className={classNames("relative", "w-full", "h-72", "mt-12")}>
       {imageUrl && (
         <img
           src={imageUrl}
           alt="Generated Pixel Image"
-          className={classNames("max-w-none")}
-          style={{ imageRendering: "pixelated" }}
+          className={classNames("w-full", "h-full", "object-contain")}
         />
       )}
     </div>
