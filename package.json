@@ -2,32 +2,31 @@
   "name": "pixel-image",
   "private": true,
   "scripts": {
+    "build": "next build",
     "dev": "next dev",
-    "vercel-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && next build",
     "start": "next start",
+    "typecheck": "tsc --noEmit",
     "format": "prettier -w \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"  \"./*.{js,jsx,ts,tsx,css,scss}\"",
     "lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
     "lint:web": "eslint \"./src/**/*.{jsx,tsx,css,scss}\"",
     "lint:api": "eslint \"./src/**/*.{js,ts}\"",
+    "audit": "npm audit --omit=dev",
     "proxy": "ngrok http 3000"
   },
   "engines": {
-    "node": "14.x"
+    "node": "24.x"
   },
   "dependencies": {
-    "axios": "^0.24.0",
-    "canvas": "2.6.1",
+    "canvas": "3.2.3",
     "classnames": "^2.3.1",
-    "image-size": "^1.0.0",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",
-    "@types/node": "16.11.12",
+    "@types/node": "24.13.2",
     "@types/react": "17.0.37",
-    "@vercel/node": "^1.12.1",
     "autoprefixer": "^10.4.0",
     "eslint": "8.4.1",
     "eslint-config-next": "12.0.7",
@@ -36,6 +35,6 @@
     "prettier": "^2.5.1",
     "sass": "^1.45.0",
     "tailwindcss": "^3.0.1",
-    "typescript": "4.5.3"
+    "typescript": "5.9.3"
   }
 }

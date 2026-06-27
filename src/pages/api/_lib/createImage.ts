@@ -1,4 +1,4 @@
-import { createCanvas, Image } from "canvas";
+import { createCanvas, loadImage } from "canvas";
 import { analyzeImage } from "./analyzer";
 import { cluster } from "./cluster";
 import type { ParsedOptions } from "./parser";
@@ -17,20 +17,16 @@ export const createImage = async ({
   ...options
 }: ParsedOptions): Promise<string | Buffer> => {
   // 画像のデータを取得
-  const { base64Image, width, height } = await analyzeImage(image);
-
-  if (!base64Image) throw new Error("image is not valid");
-  if (!width) throw new Error("image width is not valid");
-  if (!height) throw new Error("image height is not valid");
+  const { imageBuffer } = await analyzeImage(image);
+  const img = await loadImage(imageBuffer);
+  const { width, height } = img;
 
   // オリジナル画像描画用のキャンバスを作成
   const imageCanvas = createCanvas(width, height);
   const imageCtx = imageCanvas.getContext("2d");
 
   // オリジナル画像を描画
-  const img = new Image();
-  img.onload = () => imageCtx.drawImage(img, 0, 0, width, height);
-  img.src = base64Image;
+  imageCtx.drawImage(img, 0, 0, width, height);
 
   // 分割サイズを計算
   const [rWidth, rHeight] = cellSize(width, height, size);
