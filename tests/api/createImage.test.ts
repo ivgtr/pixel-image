@@ -99,6 +99,15 @@ describe("createImage", () => {
     expect(Buffer.compare(first as Buffer, second as Buffer)).toBe(0);
   });
 
+  it("is deterministic when size is 1", async () => {
+    mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
+
+    const first = await createImage(createOptions({ size: 1, k: 2 }));
+    const second = await createImage(createOptions({ size: 1, k: 2 }));
+
+    expect(Buffer.compare(first as Buffer, second as Buffer)).toBe(0);
+  });
+
   it("ignores tv effect preset when tv effect is disabled", async () => {
     mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
 
