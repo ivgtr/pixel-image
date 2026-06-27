@@ -1,6 +1,7 @@
 import { createCanvas, Image } from "canvas";
 import { analyzeImage } from "./analyzer";
 import { cluster } from "./cluster";
+import { applyTvEffect } from "./tvEffect";
 import type { ParsedOptions } from "./parser";
 
 const cellSize = (a: number, b: number, size: number): number[] => {
@@ -14,6 +15,7 @@ export const createImage = async ({
   image,
   size,
   k,
+  tvEffect,
   ...options
 }: ParsedOptions): Promise<string | Buffer> => {
   // 画像のデータを取得
@@ -72,6 +74,13 @@ export const createImage = async ({
       pixelCtx.fillRect(i * size, j * size, size, size);
     }
   }
+
+  applyTvEffect({
+    ctx: pixelCtx,
+    width: pixelCanvas.width,
+    height: pixelCanvas.height,
+    options: tvEffect,
+  });
 
   let buffer: Buffer;
   if (options.type === "jpeg") {
