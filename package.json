@@ -12,7 +12,7 @@
     "proxy": "ngrok http 3000"
   },
   "engines": {
-    "node": "14.x"
+    "node": "24.x"
   },
   "dependencies": {
     "axios": "^0.24.0",
