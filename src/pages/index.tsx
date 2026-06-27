@@ -14,16 +14,18 @@ const HOST_URL =
 
 const defaultImageUrl =
   "https://pbs.twimg.com/profile_images/1354479643882004483/Btnfm47p_400x400.jpg";
-const defaultCellSize = "15";
-const defaultKSize = "8";
+const defaultSampleSize = "15";
+const defaultPixelSize = "15";
+const defaultPaletteSize = "8";
 const Home: NextPage = () => {
   const [imageUrl, setImageUrl] = useState<string | undefined>();
 
   const handleImageUrl = useCallback((options: ImageFormOptions) => {
     const url = new URL(`${HOST_URL}/api`);
     url.searchParams.set("image", options.imageUrl);
-    url.searchParams.set("size", options.cellSize);
-    url.searchParams.set("k", options.kSize);
+    url.searchParams.set("sampleSize", options.sampleSize);
+    url.searchParams.set("pixelSize", options.pixelSize);
+    url.searchParams.set("k", options.paletteSize);
     url.searchParams.set("tv", options.tvEffectEnabled ? "1" : "0");
     if (options.tvEffectEnabled) {
       url.searchParams.set("tvPreset", options.tvEffectPreset);
@@ -54,8 +56,9 @@ const Home: NextPage = () => {
             <Form
               handleImageUrl={handleImageUrl}
               defaultImageUrl={defaultImageUrl}
-              defaultCellSize={defaultCellSize}
-              defaultKSize={defaultKSize}
+              defaultSampleSize={defaultSampleSize}
+              defaultPixelSize={defaultPixelSize}
+              defaultPaletteSize={defaultPaletteSize}
             />
           </section>
         </main>
