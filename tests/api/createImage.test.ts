@@ -2,6 +2,7 @@ import { createCanvas, loadImage } from "canvas";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { analyzeImage } from "../../src/server/pixelImage/analyzer";
 import { createImage } from "../../src/server/pixelImage/createImage";
+import type { ParsedOptions } from "../../src/server/pixelImage/parser";
 import { createTvEffectOptions } from "../../src/server/pixelImage/tvEffect/presets";
 import type { TvEffectPreset } from "../../src/server/pixelImage/tvEffect/types";
 
@@ -29,20 +30,26 @@ const createMockImageBuffer = (width: number, height: number): Buffer<ArrayBuffe
 
 const createOptions = ({
   size,
+  sampleSize = size,
+  pixelSize = size,
   k = 2,
   tv = false,
   preset = "soft-tv",
 }: {
   size: number;
+  sampleSize?: number;
+  pixelSize?: number;
   k?: number;
   tv?: boolean;
   preset?: TvEffectPreset;
-}) => ({
+}): ParsedOptions => ({
   image: "https://example.com/image.png",
   type: "png" as const,
   size,
+  sampleSize,
+  pixelSize,
   k,
-  tvEffect: createTvEffectOptions({ enabled: tv, preset, cellSize: size }),
+  tvEffect: createTvEffectOptions({ enabled: tv, preset, cellSize: pixelSize }),
 });
 
 describe("createImage", () => {
@@ -50,7 +57,7 @@ describe("createImage", () => {
     mockAnalyzeImage.mockReset();
   });
 
-  it("keeps square output dimensions", async () => {
+  it("keeps square output dimensions for size compatibility", async () => {
     mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
 
     const buffer = await createImage(createOptions({ size: 10 }));
@@ -60,7 +67,7 @@ describe("createImage", () => {
     expect(image.height).toBe(20);
   });
 
-  it("keeps horizontal output dimensions", async () => {
+  it("keeps horizontal output dimensions for size compatibility", async () => {
     mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(40, 20) });
 
     const buffer = await createImage(createOptions({ size: 10 }));
@@ -70,7 +77,7 @@ describe("createImage", () => {
     expect(image.height).toBe(20);
   });
 
-  it("keeps vertical output dimensions", async () => {
+  it("keeps vertical output dimensions for size compatibility", async () => {
     mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 40) });
 
     const buffer = await createImage(createOptions({ size: 10 }));
@@ -90,11 +97,31 @@ describe("createImage", () => {
     expect(image.height).toBe(10);
   });
 
+  it("uses pixelSize for output dimensions when sampleSize is separated", async () => {
+    mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
+
+    const buffer = await createImage(createOptions({ size: 10, sampleSize: 10, pixelSize: 5 }));
+    const image = await loadImage(buffer as Buffer);
+
+    expect(image.width).toBe(10);
+    expect(image.height).toBe(10);
+  });
+
   it("is deterministic for the same input", async () => {
     mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
 
     const first = await createImage(createOptions({ size: 10, k: 2 }));
     const second = await createImage(createOptions({ size: 10, k: 2 }));
+
+    expect(Buffer.compare(first as Buffer, second as Buffer)).toBe(0);
+  });
+
+  it("is deterministic when sampleSize and pixelSize are separated", async () => {
+    mockAnalyzeImage.mockResolvedValue({ imageBuffer: createMockImageBuffer(20, 20) });
+
+    const options = { size: 10, sampleSize: 10, pixelSize: 5, k: 2 };
+    const first = await createImage(createOptions(options));
+    const second = await createImage(createOptions(options));
 
     expect(Buffer.compare(first as Buffer, second as Buffer)).toBe(0);
   });
