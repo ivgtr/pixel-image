@@ -34,3 +34,7 @@ https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png&tv=1&tvPre
 | `crt` | Stronger scanline and bloom for CRT-like output. |
 | `famicom-composite` | Stronger horizontal bleed and color adjustment for composite-console output. |
 | `sharp-emulator` | Minimal adjustment while preserving a sharper emulator-like image. |
+
+## Runtime notes
+
+This project uses `canvas` for API-side image generation. The Vercel build uses Node.js 22 and `canvas` 3.x so dependency installation can use modern prebuilt binaries instead of compiling the older `canvas@2.6.1` package during `yarn install`.
