@@ -12,6 +12,8 @@ describe("parseRequest", () => {
       image: "https://example.com/image.png",
       type: "jpeg",
       size: 15,
+      sampleSize: 15,
+      pixelSize: 15,
       k: 8,
       tvEffect: expect.objectContaining({
         enabled: false,
@@ -21,11 +23,87 @@ describe("parseRequest", () => {
     });
   });
 
+  it("parses size as backward compatible sample and pixel size", () => {
+    expect(
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", size: "10" })),
+    ).toEqual(
+      expect.objectContaining({
+        size: 10,
+        sampleSize: 10,
+        pixelSize: 10,
+      }),
+    );
+  });
+
+  it("parses sampleSize and pixelSize", () => {
+    expect(
+      parseRequest(
+        requestWithQuery({
+          image: "https://example.com/image.png",
+          sampleSize: "8",
+          pixelSize: "16",
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        size: 15,
+        sampleSize: 8,
+        pixelSize: 16,
+      }),
+    );
+  });
+
+  it("prefers sampleSize over size", () => {
+    expect(
+      parseRequest(
+        requestWithQuery({
+          image: "https://example.com/image.png",
+          size: "12",
+          sampleSize: "8",
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        size: 12,
+        sampleSize: 8,
+        pixelSize: 12,
+      }),
+    );
+  });
+
+  it("prefers pixelSize over size", () => {
+    expect(
+      parseRequest(
+        requestWithQuery({
+          image: "https://example.com/image.png",
+          size: "12",
+          pixelSize: "16",
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        size: 12,
+        sampleSize: 12,
+        pixelSize: 16,
+      }),
+    );
+  });
+
   it("rejects invalid query shapes", () => {
     expect(() => parseRequest(requestWithQuery({ image: undefined }))).toThrow("image is required");
     expect(() => parseRequest(requestWithQuery({ image: ["a", "b"] }))).toThrow(
       "must not be array",
     );
+    expect(() =>
+      parseRequest(
+        requestWithQuery({ image: "https://example.com/image.png", sampleSize: ["8", "16"] }),
+      ),
+    ).toThrow("must not be array");
+    expect(() =>
+      parseRequest(
+        requestWithQuery({ image: "https://example.com/image.png", pixelSize: ["8", "16"] }),
+      ),
+    ).toThrow("must not be array");
   });
 
   it("validates output type", () => {
@@ -46,6 +124,30 @@ describe("parseRequest", () => {
     ).toThrow("k must be an integer");
   });
 
+  it("validates sampleSize boundaries", () => {
+    expect(() =>
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", sampleSize: "0" })),
+    ).toThrow("sampleSize must be between 1 and 50");
+    expect(() =>
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", sampleSize: "51" })),
+    ).toThrow("sampleSize must be between 1 and 50");
+    expect(() =>
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", sampleSize: "1.5" })),
+    ).toThrow("sampleSize must be an integer");
+  });
+
+  it("validates pixelSize boundaries", () => {
+    expect(() =>
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", pixelSize: "0" })),
+    ).toThrow("pixelSize must be between 1 and 50");
+    expect(() =>
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", pixelSize: "51" })),
+    ).toThrow("pixelSize must be between 1 and 50");
+    expect(() =>
+      parseRequest(requestWithQuery({ image: "https://example.com/image.png", pixelSize: "1.5" })),
+    ).toThrow("pixelSize must be an integer");
+  });
+
   it("parses tv effect options", () => {
     expect(
       parseRequest(
@@ -60,6 +162,8 @@ describe("parseRequest", () => {
       image: "https://example.com/image.png",
       type: "jpeg",
       size: 15,
+      sampleSize: 15,
+      pixelSize: 15,
       k: 8,
       tvEffect: expect.objectContaining({
         enabled: true,
