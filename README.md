@@ -34,11 +34,13 @@ Markdown ファイルにも C&P して利用できます。
   - 後方互換用。`sampleSize` と `pixelSize` の両方に同じ値を指定したものとして扱います。
   - `default: 15`
 - `?sampleSize=`
-  - 元画像を何px単位で代表色化するかを指定
-  - 小さいほど細部を拾いやすくなります
+  - 入力の細かさを指定します
+  - 元画像を何px単位のマスに分けて代表色化するかを決めます
+  - 小さいほど多くのマスに分かれ、細部を拾いやすくなります
   - `default: size` または `15`
 - `?pixelSize=`
-  - 出力時の1ドットを何pxで描画するかを指定
+  - 出力の拡大率を指定します
+  - `sampleSize` で作った1マスを、出力時に何px四方で描くかを決めます
   - 大きいほど粗く大きなドットになります
   - `default: size` または `15`
 - `?k=`
@@ -63,7 +65,16 @@ Markdown ファイルにも C&P して利用できます。
 https://pixel-image.vercel.app/api?<url=画像の URL>&[sampleSize=元画像の読み取り単位]&[pixelSize=出力時の1ドットの大きさ]&[k=palette の色数]&[tv=0 or 1]&[tvPreset=プリセット]&[tvStrength=強さ]
 ```
 
-`sampleSize` と `pixelSize` を分けると、出力画像サイズは `pixelSize` に従います。例えば元画像が `400x400`、`sampleSize=10`、`pixelSize=20` の場合、`40 cells * 20px = 800px` となり、出力画像は `800x800` になります。
+`sampleSize` は「入力を何pxごとに読むか」、`pixelSize` は「その1マスを出力で何px四方に描くか」です。
+
+出力画像サイズの目安は以下です。
+
+```text
+出力幅 ≒ ceil(元画像幅 / sampleSize) × pixelSize
+出力高さ ≒ ceil(元画像高さ / sampleSize) × pixelSize
+```
+
+例えば元画像が `400x400`、`sampleSize=10`、`pixelSize=20` の場合、`40 cells * 20px = 800px` となり、出力画像は `800x800` になります。
 
 ```md
 https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png&sampleSize=10&pixelSize=20&k=8
