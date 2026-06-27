@@ -56,4 +56,16 @@ describe("cluster", () => {
     expect(result.mat).not.toEqual([[128, 0, 128]]);
     expect(hasOnlyValidClusterReferences(result)).toBe(true);
   });
+
+  it("rejects malformed RGB colors instead of coercing them", () => {
+    expect(() => cluster([[255, 0]], 1)).toThrow("RGB tuple");
+    expect(() => cluster([[255, 0, Number.NaN]], 1)).toThrow(
+      "RGB tuple",
+    );
+  });
+
+  it("rejects invalid cluster sizes instead of returning unusable clusters", () => {
+    expect(() => cluster([red], 0)).toThrow("positive integer");
+    expect(() => cluster([red], 1.5)).toThrow("positive integer");
+  });
 });
