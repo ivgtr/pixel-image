@@ -1,5 +1,6 @@
 import type { NextApiHandler } from "next";
 import { createImage } from "../../server/pixelImage/createImage";
+import { isPixelImageError } from "../../server/pixelImage/errors";
 import { parseRequest } from "../../server/pixelImage/parser";
 
 const CACHE_MAX_AGE = 60 * 60 * 24;
@@ -17,8 +18,14 @@ const handler: NextApiHandler = async (req, res) => {
     if (process.env.NODE_ENV !== "production") {
       console.error(error);
     }
+    if (isPixelImageError(error)) {
+      res.status(error.statusCode);
+      res.end(error.message);
+      return;
+    }
+
     res.status(500);
-    res.end();
+    res.end("Internal Server Error");
   }
 };
 

@@ -1,5 +1,6 @@
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
+import { UpstreamImageError } from "./errors";
 import type { OptionalType } from "./parser";
 
 const FETCH_TIMEOUT_MS = 10_000;
@@ -11,9 +12,15 @@ const isOptionalType = (type: string): type is OptionalType => {
 };
 
 const assertImageUrl = (url: string): URL => {
-  const parsedUrl = new URL(url);
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    throw new UpstreamImageError("image URL must be valid");
+  }
+
   if (!["http:", "https:"].includes(parsedUrl.protocol)) {
-    throw new Error("image URL must use http or https");
+    throw new UpstreamImageError("image URL must use http or https");
   }
   return parsedUrl;
 };
@@ -70,21 +77,21 @@ const assertPublicHostname = async (url: URL): Promise<void> => {
   const hostname = url.hostname.replace(/^\[|\]$/g, "");
   if (isIP(hostname)) {
     if (isBlockedAddress(hostname)) {
-      throw new Error("image URL must not resolve to a private address");
+      throw new UpstreamImageError("image URL must not resolve to a private address");
     }
     return;
   }
 
   const addresses = await lookup(hostname, { all: true, verbatim: true });
   if (addresses.length === 0 || addresses.some(({ address }) => isBlockedAddress(address))) {
-    throw new Error("image URL must not resolve to a private address");
+    throw new UpstreamImageError("image URL must not resolve to a private address");
   }
 };
 
 const parseImageType = (contentType: string | null): OptionalType => {
   const type = contentType?.split(";")[0]?.split("/")[1];
   if (!type || !isOptionalType(type)) {
-    throw new Error("image must be jpeg or png");
+    throw new UpstreamImageError("image must be jpeg or png");
   }
   return type;
 };
@@ -109,29 +116,29 @@ export const analyzeImage = async (url: string) => {
 
       const location = response.headers.get("location");
       if (!location) {
-        throw new Error("image redirect is missing location");
+        throw new UpstreamImageError("image redirect is missing location");
       }
 
       imageUrl = assertImageUrl(new URL(location, imageUrl).toString());
     }
 
     if (!response || [301, 302, 303, 307, 308].includes(response.status)) {
-      throw new Error("image has too many redirects");
+      throw new UpstreamImageError("image has too many redirects");
     }
 
     if (!response.ok) {
-      throw new Error(`image request failed: ${response.status}`);
+      throw new UpstreamImageError(`image request failed: ${response.status}`);
     }
 
     const contentLength = Number(response.headers.get("content-length") ?? 0);
     if (contentLength > MAX_IMAGE_BYTES) {
-      throw new Error("image is too large");
+      throw new UpstreamImageError("image is too large");
     }
 
     parseImageType(response.headers.get("content-type"));
     const arrayBuffer = await response.arrayBuffer();
     if (arrayBuffer.byteLength > MAX_IMAGE_BYTES) {
-      throw new Error("image is too large");
+      throw new UpstreamImageError("image is too large");
     }
 
     return {

@@ -36,9 +36,28 @@ Markdown ファイルにも C&P して利用できます。
 - `?k=`
   - カラーの色数を指定
   - `default: 8`
+- `?tv=`
+  - TV表示再現エフェクトを有効化
+  - `0` または `1`
+  - `default: 0`
+- `?tvPreset=`
+  - TV表示再現エフェクトのプリセットを指定
+  - `tv=1` のときのみ有効
+  - `soft-tv`, `ntsc`, `crt`, `famicom-composite`, `sharp-emulator`
+  - `default: soft-tv`
+- `?tvStrength=`
+  - TV表示再現エフェクトの強さを `0` から `100` で指定
+  - `tv=1` のときのみ有効
+  - `default: 60`
 
 ```md
-https://pixel-image.vercel.app/api?<url=画像の URL>&[size=cell のサイズ]&[k=カラーの色数]
+https://pixel-image.vercel.app/api?<url=画像の URL>&[size=cell のサイズ]&[k=カラーの色数]&[tv=0 or 1]&[tvPreset=プリセット]&[tvStrength=強さ]
+```
+
+TV表示再現エフェクトの例。
+
+```md
+https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png&size=15&k=8&tv=1&tvPreset=soft-tv&tvStrength=60
 ```
 
 ## Demo

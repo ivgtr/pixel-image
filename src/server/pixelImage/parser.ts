@@ -1,4 +1,8 @@
 import type { NextApiRequest } from "next";
+import { BadRequestError } from "./errors";
+import { createTvEffectOptions, isTvEffectPreset } from "./tvEffect/presets";
+import { DEFAULT_TV_EFFECT_STRENGTH } from "./tvEffect/types";
+import type { TvEffectOptions } from "./tvEffect/types";
 
 export type OptionalType = "jpeg" | "png";
 
@@ -7,6 +11,7 @@ export type ParsedOptions = {
   type: OptionalType;
   size: number;
   k: number;
+  tvEffect: TvEffectOptions;
 };
 
 const isOptionalType = (type: string): type is OptionalType => {
@@ -15,31 +20,74 @@ const isOptionalType = (type: string): type is OptionalType => {
 
 const parseInteger = (value: string, name: string, min: number, max: number): number => {
   if (!/^\d+$/.test(value)) {
-    throw new Error(`${name} must be an integer`);
+    throw new BadRequestError(`${name} must be an integer`);
   }
 
   const parsed = Number(value);
   if (!Number.isSafeInteger(parsed) || parsed < min || parsed > max) {
-    throw new Error(`${name} must be between ${min} and ${max}`);
+    throw new BadRequestError(`${name} must be between ${min} and ${max}`);
   }
 
   return parsed;
 };
 
-export const parseRequest = (req: NextApiRequest): ParsedOptions => {
-  const { image, type = "jpeg", size = "15", k = "8" } = req.query;
+const parseTvEnabled = (value: string): boolean => {
+  if (value === "0") return false;
+  if (value === "1") return true;
+  throw new BadRequestError("tv must be 0 or 1");
+};
 
-  if (Array.isArray(image)) throw new Error("must not be array");
-  if (Array.isArray(size)) throw new Error("must not be array");
-  if (Array.isArray(type)) throw new Error("must not be array");
-  if (Array.isArray(k)) throw new Error("must not be array");
-  if (!image) throw new Error("image is required");
-  if (!isOptionalType(type)) throw new Error("type must be jpeg or png");
+export const parseRequest = (req: NextApiRequest): ParsedOptions => {
+  const {
+    image,
+    type = "jpeg",
+    size = "15",
+    k = "8",
+    tv = "0",
+    tvPreset = "soft-tv",
+    tvStrength = String(DEFAULT_TV_EFFECT_STRENGTH),
+  } = req.query;
+
+  if (Array.isArray(image)) throw new BadRequestError("must not be array");
+  if (Array.isArray(size)) throw new BadRequestError("must not be array");
+  if (Array.isArray(type)) throw new BadRequestError("must not be array");
+  if (Array.isArray(k)) throw new BadRequestError("must not be array");
+  if (Array.isArray(tv)) throw new BadRequestError("must not be array");
+  if (Array.isArray(tvPreset)) throw new BadRequestError("must not be array");
+  if (Array.isArray(tvStrength)) throw new BadRequestError("must not be array");
+  if (!image) throw new BadRequestError("image is required");
+  if (!isOptionalType(type)) throw new BadRequestError("type must be jpeg or png");
+  const tvEnabled = parseTvEnabled(tv);
+  const parsedSize = parseInteger(size, "size", 1, 50);
+
+  if (!tvEnabled) {
+    return {
+      image,
+      type,
+      size: parsedSize,
+      k: parseInteger(k, "k", 1, 50),
+      tvEffect: createTvEffectOptions({ enabled: false }),
+    };
+  }
+
+  if (!isTvEffectPreset(tvPreset)) {
+    throw new BadRequestError(
+      "tvPreset must be soft-tv, ntsc, crt, famicom-composite, or sharp-emulator",
+    );
+  }
+
+  const strength = parseInteger(tvStrength, "tvStrength", 0, 100);
 
   return {
     image,
     type,
-    size: parseInteger(size, "size", 1, 50),
+    size: parsedSize,
     k: parseInteger(k, "k", 1, 50),
+    tvEffect: createTvEffectOptions({
+      enabled: true,
+      preset: tvPreset,
+      strength,
+      cellSize: parsedSize,
+    }),
   };
 };
