@@ -13,9 +13,11 @@ const cellSize = (a: number, b: number, size: number): [number, number] => {
 
 export const createImage = async ({
   image,
-  size,
+  type,
+  sampleSize,
+  pixelSize,
   k,
-  ...options
+  tvEffect,
 }: ParsedOptions): Promise<string | Buffer> => {
   // 画像のデータを取得
   const { imageBuffer } = await analyzeImage(image);
@@ -30,10 +32,10 @@ export const createImage = async ({
   imageCtx.drawImage(img, 0, 0, width, height);
 
   // 分割サイズを計算
-  const [rWidth, rHeight] = cellSize(width, height, size);
+  const [rWidth, rHeight] = cellSize(width, height, sampleSize);
 
   // ピクセル化後の画像描画用のキャンバスを作成
-  const pixelCanvas = createCanvas(rWidth * size, rHeight * size);
+  const pixelCanvas = createCanvas(rWidth * pixelSize, rHeight * pixelSize);
   const pixelCtx = pixelCanvas.getContext("2d");
 
   // RGBを格納する配列を作成
@@ -41,9 +43,14 @@ export const createImage = async ({
 
   for (let i = 0; i < rWidth; i++) {
     for (let j = 0; j < rHeight; j++) {
-      const cellWidth = Math.min(size, width - i * size);
-      const cellHeight = Math.min(size, height - j * size);
-      const cell = imageCtx.getImageData(i * size, j * size, cellWidth, cellHeight);
+      const cellWidth = Math.min(sampleSize, width - i * sampleSize);
+      const cellHeight = Math.min(sampleSize, height - j * sampleSize);
+      const cell = imageCtx.getImageData(
+        i * sampleSize,
+        j * sampleSize,
+        cellWidth,
+        cellHeight,
+      );
       const cellData = cell.data;
       let avgR = 0;
       let avgG = 0;
@@ -74,21 +81,21 @@ export const createImage = async ({
     for (let j = 0; j < rHeight; j++) {
       const [r, g, b] = rgbArray[i + j * rWidth];
       pixelCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-      pixelCtx.fillRect(i * size, j * size, size, size);
+      pixelCtx.fillRect(i * pixelSize, j * pixelSize, pixelSize, pixelSize);
     }
   }
 
-  if (options.tvEffect.enabled) {
+  if (tvEffect.enabled) {
     applyTvEffect({
       ctx: pixelCtx,
       width: pixelCanvas.width,
       height: pixelCanvas.height,
-      params: options.tvEffect.params,
+      params: tvEffect.params,
     });
   }
 
   let buffer: Buffer;
-  if (options.type === "jpeg") {
+  if (type === "jpeg") {
     buffer = await pixelCanvas.toBuffer("image/jpeg");
   } else {
     buffer = await pixelCanvas.toBuffer("image/png");
