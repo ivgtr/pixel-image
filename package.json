@@ -5,9 +5,10 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
+    "test": "vitest run tests",
     "typecheck": "tsc --noEmit",
     "format": "prettier -w \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"  \"./*.{js,jsx,ts,tsx,css,scss}\"",
-    "lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,css,scss}\"",
+    "lint": "eslint \"./src/**/*.{js,jsx,ts,tsx,css,scss}\" \"./tests/**/*.{js,jsx,ts,tsx}\"",
     "lint:web": "eslint \"./src/**/*.{jsx,tsx,css,scss}\"",
     "lint:api": "eslint \"./src/**/*.{js,ts}\"",
     "audit": "npm audit --omit=dev",
@@ -18,23 +19,25 @@
   },
   "dependencies": {
     "canvas": "3.2.3",
-    "classnames": "^2.3.1",
-    "next": "12.0.7",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "classnames": "2.5.1",
+    "next": "16.2.9",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.5",
+    "@babel/core": "7.29.7",
     "@types/node": "24.13.2",
-    "@types/react": "17.0.37",
-    "autoprefixer": "^10.4.0",
-    "eslint": "8.4.1",
-    "eslint-config-next": "12.0.7",
-    "eslint-config-prettier": "^8.3.0",
-    "postcss": "^8.4.5",
-    "prettier": "^2.5.1",
-    "sass": "^1.45.0",
-    "tailwindcss": "^3.0.1",
-    "typescript": "5.9.3"
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "autoprefixer": "10.5.2",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.9",
+    "eslint-config-prettier": "10.1.8",
+    "postcss": "8.5.15",
+    "prettier": "3.8.5",
+    "sass": "1.101.0",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
   }
 }

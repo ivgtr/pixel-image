@@ -84,3 +84,53 @@ Remaining risk:
 
 - `npm audit --omit=dev` still reports vulnerabilities largely rooted in `next@12.0.7` and its old build/runtime dependency tree. Fixing those requires the next major step: Next/React migration.
 - URL validation now rejects non-HTTP(S), enforces content type, timeout, and a 5 MB byte cap, but it does not yet block private IP ranges or redirect-to-private SSRF paths. Add network-level SSRF hardening before considering arbitrary external URLs fully safe.
+
+## Implemented in the Next/React Modernization PR
+
+Verified on 2026-06-27.
+
+Primary sources checked:
+
+- Next.js 16 upgrade guide: https://nextjs.org/docs/app/guides/upgrading/version-16
+- Next.js TypeScript configuration: https://nextjs.org/docs/pages/api-reference/config/typescript
+- React 19 upgrade guide: https://react.dev/blog/2024/04/25/react-19-upgrade-guide
+- Tailwind CSS v4 upgrade guide: https://tailwindcss.com/docs/upgrade-guide
+- ESLint flat config migration guide: https://eslint.org/docs/latest/use/configure/migration-guide
+- ESLint v9 migration guide: https://eslint.org/docs/latest/use/migrate-to-9.0.0
+- TypeScript 5.9 release notes: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-9.html
+- Vercel supported Node.js versions: https://vercel.com/docs/functions/runtimes/node-js/node-js-versions
+- npm audit docs: https://docs.npmjs.com/cli/v11/commands/npm-audit/
+
+Implemented:
+
+- Upgraded Pages Router app from `next@12.0.7` / React 17 to `next@16.2.9`, `react@19.2.7`, and `react-dom@19.2.7`.
+- Kept Pages Router. App Router migration is not justified for this small app and API route because the current page/API surface migrates cleanly without changing routing semantics.
+- Updated `eslint-config-next` to 16.2.9 and migrated from `.eslintrc.js` to `eslint.config.mjs`.
+- Used `eslint@9.39.4` instead of `eslint@10.6.0` because the plugins bundled by `eslint-config-next@16.2.9` still declare peer compatibility through ESLint 9.
+- Updated React and Node types, PostCSS, Autoprefixer, Sass, Prettier, Babel, `classnames`, and Tailwind to the latest compatible v3 line.
+- Deferred Tailwind v4. The official v4 guide moves the PostCSS plugin to `@tailwindcss/postcss`, removes the need for Autoprefixer, changes import style, and raises browser requirements. That should be a separate visual/CSS PR.
+- Moved API helpers out of `src/pages/api/_lib` into `src/server/pixelImage` so Next only exposes `src/pages/api/index.ts` as an API route.
+- Added SSRF hardening for image fetches: HTTP(S)-only URLs, DNS resolution checks for localhost/private/link-local/documentation/multicast ranges, and redirect validation with a maximum redirect count.
+- Preserved fetch timeout, byte limit, and content-type validation.
+- Added Vitest coverage for query parsing, URL/protocol rejection, private IP rejection, unsupported content-type, oversized image response, and valid buffer return.
+- Re-resolved the lockfile so `node-abi@3.92.0` uses patched `semver@7.8.5`. No override is needed because `node-abi@3.92.0` declares `semver@^7.3.5`.
+
+Validation:
+
+- `npm run typecheck`: passed.
+- `npm run lint`: passed with one existing `@next/next/no-img-element` warning for `src/components/organisms/Preview/index.tsx`.
+- `npm run test`: passed, 2 files / 11 tests.
+- `npm run build`: passed. Next 16 Turbopack now builds only `/`, `/_app`, `/404`, and `/api`.
+- `npm audit --omit=dev`: still reports the known Next.js/PostCSS moderate finding.
+- Manual API checks:
+  - `http://localhost:3000/api?image=https://github.com/ivgtr.png`: `200 image/jpeg`
+  - `http://localhost:3000/api?image=https://github.com/ivgtr.png&size=15&k=8`: `200 image/jpeg`
+  - `http://localhost:3000/api?image=http://127.0.0.1:3000/favicon.ico`: rejected by SSRF guard, currently surfaced as the existing empty `500` error response.
+
+Remaining risk:
+
+- `next@16.2.9` declares an exact `postcss@8.4.31` dependency in its published package metadata. Next.js has fixed this on canary, but stable latest still carries the old PostCSS. Keep the natural stable dependency tree and wait for a stable Next.js release containing the fix unless CI requires audit-zero.
+- `canvas@3.2.3 -> prebuild-install@7.1.3 -> node-abi@3.92.0 -> semver@7.8.5` is clean after lockfile re-resolution. `node-abi@4.x` exists, but `prebuild-install@7.1.3` currently depends on `node-abi@^3.3.0`; no direct app-level action is needed.
+- The SSRF protection does pre-fetch DNS checks and redirect checks, but native `fetch` still performs its own connection resolution. A high-assurance implementation should use a controlled HTTP client/agent or egress proxy that connects only to the already-validated address.
+- API errors still collapse to empty `500` responses. A follow-up should introduce typed client errors and return `400` for invalid user input while keeping server errors opaque.
+- Tailwind v4, TypeScript 6, Babel 8, ESLint 10, and `@types/node` 26 remain deferred because they are separate major/runtime alignment decisions.

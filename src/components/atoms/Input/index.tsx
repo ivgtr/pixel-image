@@ -29,9 +29,9 @@ export const Input = memo(
           "py-2",
           "border-2",
           "border-gray-600",
-          "rounded-lg"
+          "rounded-lg",
         )}
       />
     );
-  }
+  },
 );

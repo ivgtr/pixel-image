@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import React from "react";
+import type { ReactNode } from "react";
 
-export const DefaultLayout: React.FC = ({ children }) => {
+export const DefaultLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className={classNames("w-full", "min-h-screen", "flex", "flex-col", "bg-[#252526]")}>
       <div className={classNames("container", "mx-auto", "flex-grow")}>{children}</div>

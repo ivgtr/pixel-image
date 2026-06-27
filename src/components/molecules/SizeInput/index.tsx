@@ -29,5 +29,5 @@ export const SizeInput = memo(
         })}
       </select>
     );
-  }
+  },
 );
