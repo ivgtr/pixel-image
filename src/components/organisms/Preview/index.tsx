@@ -5,7 +5,17 @@ import React from "react";
 
 export const Preview = ({ imageUrl }: { imageUrl: string | undefined }) => {
   return (
-    <div className={classNames("relative", "flex", "items-center", "justify-center", "w-full", "h-72", "mt-12")}> 
+    <div
+      className={classNames(
+        "relative",
+        "flex",
+        "items-center",
+        "justify-center",
+        "w-full",
+        "h-72",
+        "mt-12",
+      )}
+    >
       {imageUrl && (
         <img
           src={imageUrl}
