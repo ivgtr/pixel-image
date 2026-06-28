@@ -44,6 +44,10 @@ const parseTvEnabled = (value: string): boolean => {
   throw new BadRequestError("tv must be 0 or 1");
 };
 
+const createImageDataUrlField = (imageDataUrl: string | undefined) => {
+  return imageDataUrl ? { imageDataUrl } : {};
+};
+
 const createParsedOptions = ({
   image,
   imageDataUrl,
@@ -74,16 +78,19 @@ const createParsedOptions = ({
   const parsedSampleSize = parseInteger(sampleSize ?? size, "sampleSize", 1, 50);
   const parsedPixelSize = parseInteger(pixelSize ?? size, "pixelSize", 1, 50);
   const parsedK = parseInteger(k, "k", 1, 50);
+  const baseOptions = {
+    image,
+    ...createImageDataUrlField(imageDataUrl),
+    type,
+    size: parsedSize,
+    sampleSize: parsedSampleSize,
+    pixelSize: parsedPixelSize,
+    k: parsedK,
+  };
 
   if (!tvEnabled) {
     return {
-      image,
-      imageDataUrl,
-      type,
-      size: parsedSize,
-      sampleSize: parsedSampleSize,
-      pixelSize: parsedPixelSize,
-      k: parsedK,
+      ...baseOptions,
       tvEffect: createTvEffectOptions({ enabled: false }),
     };
   }
@@ -97,13 +104,7 @@ const createParsedOptions = ({
   const strength = parseInteger(tvStrength, "tvStrength", 0, 100);
 
   return {
-    image,
-    imageDataUrl,
-    type,
-    size: parsedSize,
-    sampleSize: parsedSampleSize,
-    pixelSize: parsedPixelSize,
-    k: parsedK,
+    ...baseOptions,
     tvEffect: createTvEffectOptions({
       enabled: true,
       preset: tvPreset,
