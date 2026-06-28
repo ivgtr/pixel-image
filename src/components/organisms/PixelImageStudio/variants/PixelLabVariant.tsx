@@ -48,9 +48,7 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
               >
                 Pixel Image
               </h1>
-              <p className={classNames("mt-2", "text-sm", "text-[#a8b89c]/72")}>
-                画像を、粗く、軽く、絵のように。
-              </p>
+              <p className={classNames("mt-2", "text-sm", "text-[#a8b89c]/72")}>image to pixel</p>
             </div>
             <div
               className={classNames(
@@ -62,9 +60,9 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
                 "md:text-right",
               )}
             >
-              <p>色数と粒度を調整して、元画像と変換後を見比べられます。</p>
+              <p>画像を読み込んで、色数と粒度を調整します。</p>
               <p className={classNames("text-xs", "text-[#a8b89c]/60")}>
-                URL入力 / アップロード / 比較 / 保存
+                元画像と変換後を比較できます。
               </p>
             </div>
           </div>
