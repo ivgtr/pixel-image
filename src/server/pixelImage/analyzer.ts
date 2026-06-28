@@ -96,6 +96,30 @@ const parseImageType = (contentType: string | null): OptionalType => {
   return type;
 };
 
+export const analyzeUploadedImage = (imageDataUrl: string) => {
+  const match = /^data:(image\/[a-zA-Z0-9.+-]+);base64,([A-Za-z0-9+/]+={0,2})$/.exec(
+    imageDataUrl,
+  );
+  if (!match) {
+    throw new UpstreamImageError("image data URL must be base64 encoded");
+  }
+
+  const [, contentType, base64] = match;
+  const type = parseImageType(contentType);
+  const imageBuffer = Buffer.from(base64, "base64");
+  if (imageBuffer.byteLength === 0) {
+    throw new UpstreamImageError("image data URL must not be empty");
+  }
+  if (imageBuffer.byteLength > MAX_IMAGE_BYTES) {
+    throw new UpstreamImageError("image is too large");
+  }
+
+  return {
+    imageBuffer,
+    type,
+  };
+};
+
 export const analyzeImage = async (url: string) => {
   let imageUrl = assertImageUrl(url);
   const controller = new AbortController();
