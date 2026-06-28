@@ -25,7 +25,34 @@ Markdown ファイルにも C&P して利用できます。
 [![pixel-image](https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png)](https://pixel-image.vercel.app/api?image=https://github.com/ivgtr.png)
 ```
 
-### Config
+## Web UI
+
+WebUIでは、URL入力とローカル画像アップロードの両方を使えます。
+
+- URL入力
+  - 既存のGET APIを使って変換します
+  - 共有用のAPI URLをコピーできます
+- Upload入力
+  - PNG / JPEG をブラウザから選択できます
+  - アップロード画像はサーバーに永続保存しません
+  - ローカルアップロード画像は共有URL化されません
+  - 生成結果は `Download result` から保存できます
+
+現在のWebUIは、最終デザインを決める前の探索状態です。以下の4テーマをURLクエリまたは画面上の `UI Mode` から切り替えられます。
+
+```text
+/?ui=lab
+/?ui=arcade
+/?ui=gallery
+/?ui=artifact
+```
+
+- `lab`: 個人研究所のように、パラメータと結果の関係を観察するUI
+- `arcade`: レトロゲーム機のように、触って楽しい操作体験を優先したUI
+- `gallery`: 画像鑑賞とBefore / After比較を主役にした静かなUI
+- `artifact`: API URL、保存、共有を成果物として扱う制作スタジオ型UI
+
+## Config
 
 - `?image=`
   - 画像の URL を指定
@@ -46,6 +73,7 @@ Markdown ファイルにも C&P して利用できます。
 - `?k=`
   - palette の色数を指定
   - UI上では Palette Size として扱います
+  - 少ないほどゲーム機風、多いほど元画像に近い色数になります
   - `default: 8`
 - `?tv=`
   - TV表示再現エフェクトを有効化
