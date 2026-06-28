@@ -1,5 +1,5 @@
 import { createCanvas, loadImage } from "canvas";
-import { analyzeImage } from "./analyzer";
+import { analyzeImage, analyzeUploadedImage } from "./analyzer";
 import { cluster } from "./cluster";
 import type { ParsedOptions } from "./parser";
 import { applyTvEffect } from "./tvEffect/applyTvEffect";
@@ -13,14 +13,15 @@ const cellSize = (a: number, b: number, size: number): [number, number] => {
 
 export const createImage = async ({
   image,
+  imageDataUrl,
   type,
   sampleSize,
   pixelSize,
   k,
   tvEffect,
 }: ParsedOptions): Promise<string | Buffer> => {
-  // 画像のデータを取得
-  const { imageBuffer } = await analyzeImage(image);
+  // 画像のデータを取得。remote URL と data URL は別経路で解析する。
+  const { imageBuffer } = imageDataUrl ? analyzeUploadedImage(imageDataUrl) : await analyzeImage(image);
   const img = await loadImage(imageBuffer);
   const { width, height } = img;
 
