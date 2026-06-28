@@ -1,0 +1,197 @@
+import classNames from "classnames";
+import React from "react";
+import { BeforeAfterPreview } from "../../BeforeAfterPreview";
+import { ControlBar } from "../../ControlBar";
+import { ImageSourcePicker } from "../../ImageSourcePicker";
+import { OutputActions } from "../../OutputActions";
+import type { PixelImageStudioState } from "../types";
+
+export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) => {
+  const sourceLabel = studio.sourceKind === "url" ? "Remote URL" : "Local upload";
+  const shareLabel = studio.result.canShareApiUrl ? "Shareable" : "Local only";
+
+  return (
+    <div
+      className={classNames(
+        "min-h-screen",
+        "bg-[#061014]",
+        "px-4",
+        "py-4",
+        "text-cyan-50",
+        "md:px-6",
+      )}
+    >
+      <div
+        className={classNames(
+          "mx-auto",
+          "grid",
+          "max-w-[92rem]",
+          "gap-5",
+          "lg:grid-cols-[23rem_minmax(0,1fr)]",
+        )}
+      >
+        <aside className={classNames("space-y-4", "lg:sticky", "lg:top-4", "lg:self-start")}>
+          <header
+            className={classNames(
+              "border",
+              "border-cyan-300/20",
+              "bg-slate-950/85",
+              "p-4",
+              "shadow-[0_0_0_1px_rgba(103,232,249,0.04)]",
+            )}
+          >
+            <div className={classNames("flex", "items-start", "justify-between", "gap-3")}>
+              <div>
+                <div className={classNames("mb-2", "flex", "items-center", "gap-2")}>
+                  <span className={classNames("h-2", "w-2", "bg-emerald-300")} />
+                  <p className={classNames("text-xs", "uppercase", "tracking-[0.22em]")}>
+                    Pixel Lab
+                  </p>
+                </div>
+                <h1 className={classNames("text-2xl", "font-black", "leading-tight")}>
+                  Pixel Image Workbench
+                </h1>
+              </div>
+              <span
+                className={classNames(
+                  "border",
+                  "border-cyan-200/20",
+                  "bg-cyan-100/5",
+                  "px-2",
+                  "py-1",
+                  "text-xs",
+                  "font-bold",
+                  "uppercase",
+                )}
+              >
+                {studio.status}
+              </span>
+            </div>
+            <p className={classNames("mt-3", "text-sm", "leading-6", "text-cyan-100/65")}>
+              Observe the source, tune the sampling, then export the pixel artifact.
+            </p>
+          </header>
+
+          <div className={classNames("border", "border-cyan-300/20", "bg-slate-950/80", "p-4")}>
+            <h2
+              className={classNames(
+                "mb-3",
+                "text-xs",
+                "font-bold",
+                "uppercase",
+                "tracking-[0.18em]",
+                "text-cyan-200/70",
+              )}
+            >
+              Source
+            </h2>
+            <ImageSourcePicker
+              sourceKind={studio.sourceKind}
+              source={studio.source}
+              fileError={studio.fileError}
+              onSourceKindChange={studio.setSourceKind}
+              onUrlChange={studio.setUrl}
+              onFileChange={studio.setUploadFile}
+            />
+          </div>
+          <ControlBar
+            settings={studio.settings}
+            outputEstimate={studio.outputEstimate}
+            onSettingChange={studio.setSetting}
+          />
+          <OutputActions
+            apiUrl={studio.result.apiUrl}
+            canShareApiUrl={studio.result.canShareApiUrl}
+            hasGeneratedImage={Boolean(studio.result.generatedPreviewUrl)}
+            copied={studio.copied}
+            onCopyApiUrl={studio.copyApiUrl}
+            onDownload={studio.downloadResult}
+            onReset={studio.reset}
+            compact
+          />
+        </aside>
+
+        <main className={classNames("space-y-4")}>
+          <section
+            className={classNames(
+              "grid",
+              "gap-2",
+              "border",
+              "border-cyan-300/20",
+              "bg-slate-950/70",
+              "p-3",
+              "text-xs",
+              "text-cyan-100/75",
+              "sm:grid-cols-4",
+            )}
+          >
+            <div>
+              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
+                Source
+              </span>
+              <span className={classNames("font-semibold")}>{sourceLabel}</span>
+            </div>
+            <div>
+              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
+                Artifact
+              </span>
+              <span className={classNames("font-semibold")}>{shareLabel}</span>
+            </div>
+            <div>
+              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
+                Palette
+              </span>
+              <span className={classNames("font-semibold")}>
+                {studio.settings.paletteSize} colors
+              </span>
+            </div>
+            <div>
+              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
+                TV Effect
+              </span>
+              <span className={classNames("font-semibold")}>
+                {studio.settings.tvEffectEnabled ? studio.settings.tvEffectPreset : "Off"}
+              </span>
+            </div>
+          </section>
+
+          <div
+            className={classNames(
+              "border",
+              "border-cyan-300/20",
+              "bg-[linear-gradient(#10212a_1px,transparent_1px),linear-gradient(90deg,#10212a_1px,transparent_1px)]",
+              "bg-[size:18px_18px]",
+              "p-3",
+            )}
+          >
+            <BeforeAfterPreview
+              originalImageUrl={studio.result.originalPreviewUrl}
+              generatedImageUrl={studio.result.generatedPreviewUrl}
+              isLoading={studio.result.isLoading}
+              errorMessage={studio.result.errorMessage}
+              frameClassName="min-h-[36rem] border border-cyan-200/20 bg-slate-950"
+            />
+          </div>
+          <div
+            className={classNames(
+              "grid",
+              "gap-3",
+              "border",
+              "border-cyan-300/20",
+              "bg-black/20",
+              "p-3",
+              "text-xs",
+              "text-cyan-100/70",
+              "sm:grid-cols-4",
+            )}
+          >
+            <span>Input Sampling: {studio.settings.sampleSize}</span>
+            <span>Pixel Output: {studio.settings.pixelSize}</span>
+            <span>Palette: {studio.settings.paletteSize} colors</span>
+            <span>Output: {studio.outputEstimate}</span>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};

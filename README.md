@@ -92,6 +92,20 @@ Web サイトで試すことができます。
 
 - https://pixel-image.vercel.app
 
+### WebUI
+
+WebUIでは画像URL入力とローカル画像アップロードを切り替えて使えます。
+
+- URL入力: 同一デプロイのGET `/api` を使い、共有可能なAPI URLを生成します。
+- Upload入力: PNG / JPEG をブラウザで読み込み、POST `/api` で一時的に変換します。
+- Upload画像はサーバーに永続保存されず、共有URL化もされません。
+
+WebUIはPixel Lab方向のワークベンチUIです。画像を観察しながら `Sample Size`、
+`Pixel Size`、`Palette Size`、TV Effectを調整し、Before / Afterで結果を比較できます。
+
+APIのGET利用例は従来どおりURL画像向けです。`sampleSize` は元画像を読む細かさ、
+`pixelSize` は出力ドットの大きさ、`k` はPalette Sizeとして使う色数を表します。
+
 ## License
 
 MIT ©[ivgtr](https://github.com/ivgtr)

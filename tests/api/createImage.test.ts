@@ -1,7 +1,7 @@
 import { createCanvas, loadImage } from "canvas";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { analyzeImage } from "../../src/server/pixelImage/analyzer";
-import { createImage } from "../../src/server/pixelImage/createImage";
+import { createImage, createImageFromBuffer } from "../../src/server/pixelImage/createImage";
 import type { ParsedOptions } from "../../src/server/pixelImage/parser";
 import { createTvEffectOptions } from "../../src/server/pixelImage/tvEffect/presets";
 import type { TvEffectPreset } from "../../src/server/pixelImage/tvEffect/types";
@@ -124,6 +124,18 @@ describe("createImage", () => {
     const second = await createImage(createOptions(options));
 
     expect(Buffer.compare(first as Buffer, second as Buffer)).toBe(0);
+  });
+
+  it("creates an image from an uploaded image buffer", async () => {
+    const buffer = await createImageFromBuffer(
+      createMockImageBuffer(20, 20),
+      createOptions({ size: 10 }),
+    );
+    const image = await loadImage(buffer as Buffer);
+
+    expect(image.width).toBe(20);
+    expect(image.height).toBe(20);
+    expect(mockAnalyzeImage).not.toHaveBeenCalled();
   });
 
   it("is deterministic when size is 1", async () => {
