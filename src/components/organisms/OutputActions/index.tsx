@@ -21,6 +21,7 @@ export const OutputActions = ({
   compact = false,
 }: OutputActionsProps) => {
   const copyLabel = copyStatus === "copied" ? "Copied" : copyStatus === "failed" ? "Copy failed" : "Copy API URL";
+  const markdownSnippet = result.apiUrl ? `[![pixel-image](${result.apiUrl})](${result.apiUrl})` : "";
 
   return (
     <section className={classNames("rounded-3xl border border-white/10 bg-black/25 p-4 text-slate-100", compact ? "text-sm" : undefined)}>
@@ -76,17 +77,31 @@ export const OutputActions = ({
       </div>
 
       {result.canShareApiUrl && result.apiUrl ? (
-        <div className="mt-4">
-          <label htmlFor="api-url-output" className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-            API URL
-          </label>
-          <textarea
-            id="api-url-output"
-            readOnly
-            value={result.apiUrl}
-            rows={compact ? 2 : 3}
-            className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 p-3 font-mono text-xs text-slate-200 outline-none"
-          />
+        <div className="mt-4 grid gap-3">
+          <div>
+            <label htmlFor="api-url-output" className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              API URL
+            </label>
+            <textarea
+              id="api-url-output"
+              readOnly
+              value={result.apiUrl}
+              rows={compact ? 2 : 3}
+              className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 p-3 font-mono text-xs text-slate-200 outline-none"
+            />
+          </div>
+          <div>
+            <label htmlFor="markdown-snippet-output" className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+              Markdown snippet
+            </label>
+            <textarea
+              id="markdown-snippet-output"
+              readOnly
+              value={markdownSnippet}
+              rows={compact ? 2 : 3}
+              className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/35 p-3 font-mono text-xs text-slate-200 outline-none"
+            />
+          </div>
         </div>
       ) : (
         <p className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
