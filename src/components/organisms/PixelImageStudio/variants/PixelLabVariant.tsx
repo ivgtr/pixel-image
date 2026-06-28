@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useState } from "react";
 import { BeforeAfterPreview } from "../../BeforeAfterPreview";
 import { ControlBar } from "../../ControlBar";
 import { ImageSourcePicker } from "../../ImageSourcePicker";
@@ -9,6 +9,7 @@ import type { PixelImageStudioState } from "../types";
 export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) => {
   const sourceLabel = studio.sourceKind === "url" ? "Remote URL" : "Local upload";
   const shareLabel = studio.result.canShareApiUrl ? "Shareable" : "Local only";
+  const [controlsOpen, setControlsOpen] = useState(false);
 
   return (
     <div
@@ -30,7 +31,16 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
           "lg:grid-cols-[23rem_minmax(0,1fr)]",
         )}
       >
-        <aside className={classNames("space-y-4", "lg:sticky", "lg:top-4", "lg:self-start")}>
+        <aside
+          className={classNames(
+            "order-2",
+            "space-y-4",
+            "lg:order-1",
+            "lg:sticky",
+            "lg:top-4",
+            "lg:self-start",
+          )}
+        >
           <header
             className={classNames(
               "border",
@@ -72,48 +82,82 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
             </p>
           </header>
 
-          <div className={classNames("border", "border-cyan-300/20", "bg-slate-950/80", "p-4")}>
-            <h2
-              className={classNames(
-                "mb-3",
-                "text-xs",
-                "font-bold",
-                "uppercase",
-                "tracking-[0.18em]",
-                "text-cyan-200/70",
-              )}
-            >
-              Source
-            </h2>
-            <ImageSourcePicker
-              sourceKind={studio.sourceKind}
-              source={studio.source}
-              fileError={studio.fileError}
-              onSourceKindChange={studio.setSourceKind}
-              onUrlChange={studio.setUrl}
-              onFileChange={studio.setUploadFile}
+          <button
+            type="button"
+            onClick={() => setControlsOpen((current) => !current)}
+            className={classNames(
+              "flex",
+              "w-full",
+              "items-center",
+              "justify-between",
+              "border",
+              "border-cyan-300/20",
+              "bg-cyan-100/10",
+              "px-4",
+              "py-3",
+              "text-left",
+              "text-sm",
+              "font-bold",
+              "uppercase",
+              "tracking-[0.14em]",
+              "text-cyan-50",
+              "lg:hidden",
+            )}
+            aria-expanded={controlsOpen}
+            aria-controls="pixel-lab-controls"
+          >
+            <span>Lab controls</span>
+            <span>{controlsOpen ? "Close" : "Open"}</span>
+          </button>
+
+          <div
+            id="pixel-lab-controls"
+            className={classNames("space-y-4", controlsOpen ? "block" : "hidden", "lg:block")}
+          >
+            <div className={classNames("border", "border-cyan-300/20", "bg-slate-950/80", "p-4")}>
+              <h2
+                className={classNames(
+                  "mb-3",
+                  "text-xs",
+                  "font-bold",
+                  "uppercase",
+                  "tracking-[0.18em]",
+                  "text-cyan-200/70",
+                )}
+              >
+                Source
+              </h2>
+              <ImageSourcePicker
+                sourceKind={studio.sourceKind}
+                source={studio.source}
+                fileError={studio.fileError}
+                onSourceKindChange={studio.setSourceKind}
+                onUrlChange={studio.setUrl}
+                onFileChange={studio.setUploadFile}
+              />
+            </div>
+            <ControlBar
+              settings={studio.settings}
+              outputEstimate={studio.outputEstimate}
+              onSettingChange={studio.setSetting}
+            />
+            <OutputActions
+              apiUrl={studio.result.apiUrl}
+              canShareApiUrl={studio.result.canShareApiUrl}
+              hasGeneratedImage={Boolean(studio.result.generatedPreviewUrl)}
+              copied={studio.copied}
+              onCopyApiUrl={studio.copyApiUrl}
+              onDownload={studio.downloadResult}
+              onReset={studio.reset}
+              compact
             />
           </div>
-          <ControlBar
-            settings={studio.settings}
-            outputEstimate={studio.outputEstimate}
-            onSettingChange={studio.setSetting}
-          />
-          <OutputActions
-            apiUrl={studio.result.apiUrl}
-            canShareApiUrl={studio.result.canShareApiUrl}
-            hasGeneratedImage={Boolean(studio.result.generatedPreviewUrl)}
-            copied={studio.copied}
-            onCopyApiUrl={studio.copyApiUrl}
-            onDownload={studio.downloadResult}
-            onReset={studio.reset}
-            compact
-          />
         </aside>
 
-        <main className={classNames("space-y-4")}>
+        <main className={classNames("order-1", "flex", "flex-col", "gap-4", "lg:order-2")}>
           <section
             className={classNames(
+              "order-2",
               "grid",
               "gap-2",
               "border",
@@ -123,6 +167,7 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
               "text-xs",
               "text-cyan-100/75",
               "sm:grid-cols-4",
+              "lg:order-1",
             )}
           >
             <div>
@@ -157,11 +202,14 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
 
           <div
             className={classNames(
+              "order-1",
               "border",
               "border-cyan-300/20",
               "bg-[linear-gradient(#10212a_1px,transparent_1px),linear-gradient(90deg,#10212a_1px,transparent_1px)]",
               "bg-[size:18px_18px]",
-              "p-3",
+              "p-2",
+              "lg:order-2",
+              "lg:p-3",
             )}
           >
             <BeforeAfterPreview
@@ -169,11 +217,12 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
               generatedImageUrl={studio.result.generatedPreviewUrl}
               isLoading={studio.result.isLoading}
               errorMessage={studio.result.errorMessage}
-              frameClassName="min-h-[36rem] border border-cyan-200/20 bg-slate-950"
+              frameClassName="min-h-[22rem] border border-cyan-200/20 bg-slate-950 lg:min-h-[36rem]"
             />
           </div>
           <div
             className={classNames(
+              "order-3",
               "grid",
               "gap-3",
               "border",

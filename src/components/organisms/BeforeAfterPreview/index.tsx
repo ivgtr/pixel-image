@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useState } from "react";
 
 type BeforeAfterPreviewProps = {
   originalImageUrl: string | undefined;
@@ -18,7 +18,15 @@ const ImagePane = ({
   imageUrl: string | undefined;
   alt: string;
 }) => (
-  <figure className={classNames("relative", "min-h-[18rem]", "overflow-hidden", "bg-black/40")}>
+  <figure
+    className={classNames(
+      "relative",
+      "min-h-[22rem]",
+      "overflow-hidden",
+      "bg-black/40",
+      "md:min-h-[36rem]",
+    )}
+  >
     <div
       className={classNames(
         "absolute",
@@ -46,7 +54,7 @@ const ImagePane = ({
         className={classNames(
           "flex",
           "h-full",
-          "min-h-[18rem]",
+          "min-h-[22rem]",
           "items-center",
           "justify-center",
           "p-8",
@@ -68,6 +76,8 @@ export const BeforeAfterPreview = ({
   errorMessage,
   frameClassName,
 }: BeforeAfterPreviewProps) => {
+  const [mobileCompare, setMobileCompare] = useState("50");
+  const mobileCompareNumber = Number(mobileCompare);
   const overlay = (
     <>
       {isLoading && (
@@ -113,18 +123,69 @@ export const BeforeAfterPreview = ({
   );
 
   return (
-    <div
-      className={classNames(
-        "relative",
-        "grid",
-        "overflow-hidden",
-        "md:grid-cols-2",
-        frameClassName,
-      )}
-    >
-      <ImagePane label="Original" imageUrl={originalImageUrl} alt="Original image preview" />
-      <ImagePane label="Pixelated" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
+    <section className={classNames("relative", frameClassName)}>
+      <div
+        className={classNames("hidden", "h-full", "overflow-hidden", "md:grid", "md:grid-cols-2")}
+      >
+        <ImagePane label="Original" imageUrl={originalImageUrl} alt="Original image preview" />
+        <ImagePane label="Pixelated" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
+      </div>
+
+      <div className={classNames("md:hidden")}>
+        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-black/40")}>
+          <ImagePane label="Original" imageUrl={originalImageUrl} alt="Original image preview" />
+          <div
+            className={classNames("absolute", "inset-0", "overflow-hidden")}
+            style={{ clipPath: `inset(0 ${100 - mobileCompareNumber}% 0 0)` }}
+          >
+            <ImagePane
+              label="Pixelated"
+              imageUrl={generatedImageUrl}
+              alt="Pixelated image preview"
+            />
+          </div>
+          <div
+            className={classNames(
+              "absolute",
+              "inset-y-0",
+              "z-10",
+              "w-0.5",
+              "bg-cyan-100",
+              "shadow-[0_0_12px_rgba(207,250,254,0.75)]",
+            )}
+            style={{ left: `${mobileCompareNumber}%` }}
+          />
+        </div>
+        <label
+          htmlFor="before-after-mobile-slider"
+          className={classNames(
+            "block",
+            "border-t",
+            "border-cyan-200/10",
+            "bg-black/30",
+            "p-3",
+            "text-xs",
+            "font-semibold",
+            "text-cyan-100",
+          )}
+        >
+          <span className={classNames("mb-2", "flex", "items-center", "justify-between", "gap-3")}>
+            <span>Before / After</span>
+            <span className={classNames("tabular-nums")}>{mobileCompare}% After</span>
+          </span>
+          <input
+            id="before-after-mobile-slider"
+            type="range"
+            min="0"
+            max="100"
+            value={mobileCompare}
+            onChange={(event) => setMobileCompare(event.currentTarget.value)}
+            className={classNames("w-full", "accent-cyan-200")}
+          />
+        </label>
+      </div>
+
       {overlay}
-    </div>
+    </section>
   );
 };
