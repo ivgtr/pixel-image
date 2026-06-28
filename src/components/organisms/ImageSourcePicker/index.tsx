@@ -40,8 +40,8 @@ export const ImageSourcePicker = ({
               "text-sm",
               "font-semibold",
               sourceKind === value
-                ? "border-zinc-100/40 bg-zinc-100/90 text-[#111218]"
-                : "border-zinc-100/10 bg-[#111218] text-zinc-100/65 hover:border-zinc-100/25",
+                ? "border-[#a8b89c]/60 bg-[#cfd8bd] text-[#141118]"
+                : "border-[#a8b89c]/12 bg-[#100d13] text-[#c7c0b5]/68 hover:border-[#a8b89c]/32",
             )}
           >
             {label}
@@ -62,15 +62,15 @@ export const ImageSourcePicker = ({
             className={classNames(
               "w-full",
               "border",
-              "border-zinc-100/10",
-              "bg-[#101117]",
+              "border-[#a8b89c]/10",
+              "bg-[#100d13]",
               "px-3",
               "py-2",
               "text-sm",
-              "text-zinc-100",
+              "text-[#ece7dc]",
               "outline-none",
-              "placeholder:text-zinc-100/30",
-              "focus:border-zinc-100/45",
+              "placeholder:text-[#c7c0b5]/30",
+              "focus:border-[#a8b89c]/48",
             )}
           />
           {!compact && (
@@ -92,12 +92,12 @@ export const ImageSourcePicker = ({
             className={classNames(
               "w-full",
               "border",
-              "border-zinc-100/10",
-              "bg-[#101117]",
+              "border-[#a8b89c]/10",
+              "bg-[#100d13]",
               "px-3",
               "py-2",
               "text-sm",
-              "text-zinc-100",
+              "text-[#ece7dc]",
             )}
           />
           <p className={classNames("mt-1", "text-xs", "text-white/60")}>

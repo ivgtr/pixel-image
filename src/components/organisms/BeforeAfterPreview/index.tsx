@@ -18,45 +18,41 @@ const ImagePane = ({
   imageUrl: string | undefined;
   alt: string;
 }) => (
-  <figure
-    className={classNames(
-      "relative",
-      "min-h-[22rem]",
-      "overflow-hidden",
-      "bg-[#08090d]",
-      "md:min-h-[36rem]",
-    )}
-  >
+  <figure className={classNames("relative", "min-h-[22rem]", "bg-[#09090d]", "md:min-h-[36rem]")}>
     <div
       className={classNames(
-        "absolute",
-        "left-3",
-        "top-3",
-        "z-10",
-        "bg-[#08090d]/75",
-        "px-2",
-        "py-1",
+        "border-b",
+        "border-[#a8b89c]/10",
+        "bg-[#09090d]/76",
+        "px-3",
+        "py-2",
         "text-xs",
         "font-semibold",
-        "text-zinc-100/75",
+        "text-[#ece7dc]/75",
       )}
     >
       {label}
     </div>
     {imageUrl ? (
-      <img src={imageUrl} alt={alt} className={classNames("h-full", "w-full", "object-contain")} />
+      <div className={classNames("h-[calc(100%-2rem)]", "min-h-[20rem]", "md:min-h-[34rem]")}>
+        <img
+          src={imageUrl}
+          alt={alt}
+          className={classNames("h-full", "w-full", "object-contain")}
+        />
+      </div>
     ) : (
       <div
         className={classNames(
           "flex",
           "h-full",
-          "min-h-[22rem]",
+          "min-h-[20rem]",
           "items-center",
           "justify-center",
           "p-8",
           "text-center",
           "text-sm",
-          "text-zinc-100/45",
+          "text-[#c7c0b5]/45",
         )}
       >
         画像を読み込むとここに表示されます
@@ -86,10 +82,10 @@ export const BeforeAfterPreview = ({
             "flex",
             "items-center",
             "justify-center",
-            "bg-[#08090d]/75",
+            "bg-[#09090d]/75",
             "text-sm",
             "font-semibold",
-            "text-zinc-100",
+            "text-[#ece7dc]",
           )}
         >
           変換中...
@@ -128,7 +124,7 @@ export const BeforeAfterPreview = ({
       </div>
 
       <div className={classNames("md:hidden")}>
-        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-[#08090d]")}>
+        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-[#09090d]")}>
           <ImagePane label="元画像" imageUrl={originalImageUrl} alt="Original image preview" />
           <div
             className={classNames("absolute", "inset-0", "overflow-hidden")}
@@ -137,7 +133,7 @@ export const BeforeAfterPreview = ({
             <ImagePane label="変換後" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
           </div>
           <div
-            className={classNames("absolute", "inset-y-0", "z-10", "w-0.5", "bg-rose-100/80")}
+            className={classNames("absolute", "inset-y-0", "z-10", "w-0.5", "bg-[#e9b9c8]/80")}
             style={{ left: `${mobileCompareNumber}%` }}
           />
         </div>
@@ -146,12 +142,12 @@ export const BeforeAfterPreview = ({
           className={classNames(
             "block",
             "border-t",
-            "border-zinc-100/10",
-            "bg-[#0f1015]",
+            "border-[#a8b89c]/10",
+            "bg-[#100d13]",
             "p-3",
             "text-xs",
             "font-semibold",
-            "text-zinc-100/75",
+            "text-[#c7c0b5]/75",
           )}
         >
           <span className={classNames("mb-2", "flex", "items-center", "justify-between", "gap-3")}>
@@ -165,7 +161,7 @@ export const BeforeAfterPreview = ({
             max="100"
             value={mobileCompare}
             onChange={(event) => setMobileCompare(event.currentTarget.value)}
-            className={classNames("w-full", "accent-rose-100")}
+            className={classNames("w-full", "accent-[#e9b9c8]")}
           />
         </label>
       </div>

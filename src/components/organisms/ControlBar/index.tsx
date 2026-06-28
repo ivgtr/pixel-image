@@ -34,8 +34,8 @@ const presets = [
 ];
 
 const ControlSection = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <section className={classNames("space-y-3", "border-t", "border-zinc-100/10", "pt-4")}>
-    <h3 className={classNames("text-xs", "font-bold", "text-zinc-100/65")}>{label}</h3>
+  <section className={classNames("space-y-3", "border-t", "border-[#a8b89c]/10", "pt-4")}>
+    <h3 className={classNames("text-xs", "font-bold", "text-[#c7c0b5]/62")}>{label}</h3>
     {children}
   </section>
 );
@@ -59,13 +59,13 @@ const SliderField = ({
 }) => (
   <label htmlFor={id} className={classNames("block", "space-y-2")}>
     <span className={classNames("flex", "items-center", "justify-between", "gap-3")}>
-      <span className={classNames("text-sm", "font-semibold", "text-zinc-100/85")}>{label}</span>
+      <span className={classNames("text-sm", "font-semibold", "text-[#ece7dc]/86")}>{label}</span>
       <span
         className={classNames(
           "min-w-[3rem]",
           "border",
-          "border-zinc-100/10",
-          "bg-[#101117]",
+          "border-[#a8b89c]/10",
+          "bg-[#100d13]",
           "px-2",
           "py-1",
           "text-center",
@@ -85,7 +85,7 @@ const SliderField = ({
       onChange={(event) => onChange(event.currentTarget.value)}
       className={classNames("w-full", "accent-current")}
     />
-    <span className={classNames("block", "text-xs", "text-zinc-100/50")}>{help}</span>
+    <span className={classNames("block", "text-xs", "text-[#c7c0b5]/50")}>{help}</span>
   </label>
 );
 
@@ -95,15 +95,15 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
       className={classNames(
         "space-y-5",
         "border",
-        "border-zinc-100/10",
-        "bg-[#101117]/85",
+        "border-[#a8b89c]/10",
+        "bg-[#18131a]/88",
         "p-4",
-        "text-zinc-100",
+        "text-[#ece7dc]",
       )}
     >
       <div>
         <h2 className={classNames("text-sm", "font-bold")}>変換設定</h2>
-        <p className={classNames("mt-1", "text-xs", "text-zinc-100/45")}>{outputEstimate}</p>
+        <p className={classNames("mt-1", "text-xs", "text-[#c7c0b5]/45")}>{outputEstimate}</p>
       </div>
 
       <ControlSection label="プリセット">
@@ -119,16 +119,16 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
               }}
               className={classNames(
                 "border",
-                "border-zinc-100/10",
-                "bg-[#0c0d12]",
+                "border-[#a8b89c]/12",
+                "bg-[#100d13]",
                 "px-3",
                 "py-2",
                 "text-left",
                 "text-sm",
                 "font-semibold",
-                "text-zinc-100/80",
-                "hover:border-zinc-100/25",
-                "focus:border-zinc-100/45",
+                "text-[#ece7dc]/80",
+                "hover:border-[#a8b89c]/35",
+                "focus:border-[#a8b89c]/55",
                 "focus:outline-none",
               )}
             >
@@ -197,12 +197,12 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
             className={classNames(
               "w-full",
               "border",
-              "border-zinc-100/10",
-              "bg-[#101117]",
+              "border-[#a8b89c]/10",
+              "bg-[#100d13]",
               "px-3",
               "py-2",
               "text-sm",
-              "text-zinc-100",
+              "text-[#ece7dc]",
             )}
           >
             <option value="soft-tv">Soft TV</option>

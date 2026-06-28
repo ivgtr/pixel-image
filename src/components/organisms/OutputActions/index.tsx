@@ -24,11 +24,11 @@ export const OutputActions = ({
 }: OutputActionsProps) => {
   return (
     <section
-      className={classNames("space-y-3", "border", "border-zinc-100/10", "bg-[#101117]/85", "p-4")}
+      className={classNames("space-y-3", "border", "border-[#a8b89c]/10", "bg-[#18131a]/88", "p-4")}
     >
       <div className={classNames("flex", "items-center", "justify-between", "gap-3")}>
-        <h2 className={classNames("text-sm", "font-bold", "text-zinc-100")}>保存と共有</h2>
-        <span className={classNames("text-xs", "text-zinc-100/45")}>
+        <h2 className={classNames("text-sm", "font-bold", "text-[#ece7dc]")}>保存と共有</h2>
+        <span className={classNames("text-xs", "text-[#c7c0b5]/45")}>
           {canShareApiUrl ? "共有できます" : "この画面だけ"}
         </span>
       </div>
@@ -44,8 +44,8 @@ export const OutputActions = ({
             "text-sm",
             "font-semibold",
             canShareApiUrl
-              ? "border-zinc-100/30 bg-zinc-100/90 text-[#111218]"
-              : "cursor-not-allowed border-zinc-100/10 bg-white/5 text-zinc-100/35",
+              ? "border-[#a8b89c]/60 bg-[#cfd8bd] text-[#141118]"
+              : "cursor-not-allowed border-[#a8b89c]/10 bg-white/5 text-[#c7c0b5]/35",
           )}
         >
           {copied ? "コピー済み" : "API URLをコピー"}
@@ -61,8 +61,8 @@ export const OutputActions = ({
             "text-sm",
             "font-semibold",
             hasGeneratedImage
-              ? "border-rose-100/50 bg-rose-100/90 text-[#171116]"
-              : "cursor-not-allowed border-zinc-100/10 bg-white/5 text-zinc-100/35",
+              ? "border-[#e9b9c8]/60 bg-[#e9c3cf] text-[#171116]"
+              : "cursor-not-allowed border-[#a8b89c]/10 bg-white/5 text-[#c7c0b5]/35",
           )}
         >
           PNGを保存
@@ -72,13 +72,13 @@ export const OutputActions = ({
           onClick={onReset}
           className={classNames(
             "border",
-            "border-zinc-100/10",
-            "bg-[#0c0d12]",
+            "border-[#a8b89c]/10",
+            "bg-[#100d13]",
             "px-3",
             "py-2",
             "text-sm",
             "font-semibold",
-            "text-zinc-100/75",
+            "text-[#ece7dc]/75",
           )}
         >
           もう一度試す
@@ -88,11 +88,11 @@ export const OutputActions = ({
       <div
         className={classNames(
           "border",
-          "border-zinc-100/10",
-          "bg-[#0c0d12]",
+          "border-[#a8b89c]/10",
+          "bg-[#100d13]",
           "p-3",
           "text-xs",
-          "text-zinc-100/50",
+          "text-[#c7c0b5]/50",
         )}
       >
         {canShareApiUrl && apiUrl ? (

@@ -15,173 +15,219 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
     <div
       className={classNames(
         "min-h-screen",
-        "bg-[#0b0b10]",
+        "bg-[#120e14]",
         "px-4",
         "py-5",
         "text-zinc-100",
         "md:px-6",
       )}
     >
-      <div
-        className={classNames(
-          "mx-auto",
-          "grid",
-          "max-w-[92rem]",
-          "gap-6",
-          "lg:grid-cols-[21rem_minmax(0,1fr)]",
-        )}
-      >
-        <aside
+      <div className={classNames("mx-auto", "max-w-[92rem]")}>
+        <header
           className={classNames(
-            "order-2",
-            "space-y-4",
-            "lg:order-1",
-            "lg:sticky",
-            "lg:top-5",
-            "lg:self-start",
+            "mb-5",
+            "border-y",
+            "border-[#a8b89c]/14",
+            "py-3",
+            "text-[#c7c0b5]",
           )}
         >
-          <header className={classNames("bg-[#111218]/82", "p-4")}>
-            <div className={classNames("flex", "items-start", "justify-between", "gap-3")}>
-              <div>
-                <h1 className={classNames("text-2xl", "font-black", "leading-tight")}>
-                  Pixel Image
-                </h1>
-                <p className={classNames("mt-2", "text-sm", "leading-6", "text-zinc-100/58")}>
-                  画像を、粗く、軽く、絵のように。
-                </p>
-              </div>
-              <span
-                className={classNames(
-                  "bg-zinc-100/8",
-                  "px-2.5",
-                  "py-1.5",
-                  "text-xs",
-                  "text-zinc-100/55",
-                )}
-              >
-                {studio.result.isLoading ? "変換中" : "プレビュー"}
-              </span>
-            </div>
-          </header>
-
-          <button
-            type="button"
-            onClick={() => setControlsOpen((current) => !current)}
+          <div
             className={classNames(
               "flex",
-              "w-full",
-              "items-center",
-              "justify-between",
-              "bg-[#111218]/82",
-              "px-4",
-              "py-3",
-              "text-left",
-              "text-sm",
-              "font-semibold",
-              "text-zinc-100/82",
-              "lg:hidden",
-            )}
-            aria-expanded={controlsOpen}
-            aria-controls="pixel-lab-controls"
-          >
-            <span>設定を開く</span>
-            <span>{controlsOpen ? "閉じる" : "開く"}</span>
-          </button>
-
-          <div
-            id="pixel-lab-controls"
-            className={classNames("space-y-4", controlsOpen ? "block" : "hidden", "lg:block")}
-          >
-            <section className={classNames("bg-[#111218]/82", "p-4")}>
-              <h2 className={classNames("mb-3", "text-sm", "font-bold", "text-zinc-100/82")}>
-                画像を読み込む
-              </h2>
-              <ImageSourcePicker
-                sourceKind={studio.sourceKind}
-                source={studio.source}
-                fileError={studio.fileError}
-                onSourceKindChange={studio.setSourceKind}
-                onUrlChange={studio.setUrl}
-                onFileChange={studio.setUploadFile}
-              />
-            </section>
-            <ControlBar
-              settings={studio.settings}
-              outputEstimate={studio.outputEstimate}
-              onSettingChange={studio.setSetting}
-            />
-            <OutputActions
-              apiUrl={studio.result.apiUrl}
-              canShareApiUrl={studio.result.canShareApiUrl}
-              hasGeneratedImage={Boolean(studio.result.generatedPreviewUrl)}
-              copied={studio.copied}
-              onCopyApiUrl={studio.copyApiUrl}
-              onDownload={studio.downloadResult}
-              onReset={studio.reset}
-              compact
-            />
-          </div>
-        </aside>
-
-        <main className={classNames("order-1", "flex", "flex-col", "gap-5", "lg:order-2")}>
-          <div
-            className={classNames(
-              "order-1",
-              "bg-[#121218]",
-              "p-3",
-              "shadow-[0_28px_80px_rgba(0,0,0,0.38)]",
-              "lg:p-5",
+              "flex-col",
+              "gap-3",
+              "md:flex-row",
+              "md:items-end",
+              "md:justify-between",
             )}
           >
-            <BeforeAfterPreview
-              originalImageUrl={studio.result.originalPreviewUrl}
-              generatedImageUrl={studio.result.generatedPreviewUrl}
-              isLoading={studio.result.isLoading}
-              errorMessage={studio.result.errorMessage}
-              frameClassName="min-h-[22rem] bg-[#08090d] lg:min-h-[36rem]"
-            />
+            <div>
+              <nav
+                aria-label="site notes"
+                className={classNames(
+                  "mb-2",
+                  "flex",
+                  "flex-wrap",
+                  "gap-x-3",
+                  "gap-y-1",
+                  "text-xs",
+                  "text-[#a8b89c]/70",
+                )}
+              >
+                <span>top</span>
+                <span>load</span>
+                <span>compare</span>
+                <span>save</span>
+              </nav>
+              <h1
+                className={classNames("text-3xl", "font-black", "leading-none", "text-[#ece7dc]")}
+              >
+                Pixel Image
+              </h1>
+            </div>
+            <p className={classNames("max-w-md", "text-sm", "leading-6", "text-[#c7c0b5]/62")}>
+              色と粒度を調整して、画像の見え方を変える。元画像と変換後を見比べながら調整できます。
+            </p>
           </div>
+        </header>
 
-          <section
+        <div className={classNames("grid", "gap-6", "lg:grid-cols-[20rem_minmax(0,1fr)]")}>
+          <aside
             className={classNames(
               "order-2",
-              "grid",
-              "gap-3",
-              "px-1",
-              "text-xs",
-              "text-zinc-100/48",
-              "sm:grid-cols-4",
+              "space-y-4",
+              "lg:order-1",
+              "lg:sticky",
+              "lg:top-5",
+              "lg:self-start",
             )}
           >
-            <p>
-              入力 <span className={classNames("text-zinc-100/70")}>{sourceLabel}</span>
-            </p>
-            <p>
-              共有 <span className={classNames("text-zinc-100/70")}>{shareLabel}</span>
-            </p>
-            <p>
-              色数{" "}
-              <span className={classNames("text-zinc-100/70")}>{studio.settings.paletteSize}</span>
-            </p>
-            <p>
-              表示効果{" "}
-              <span className={classNames("text-zinc-100/70")}>
-                {studio.settings.tvEffectEnabled ? "あり" : "なし"}
-              </span>
-            </p>
-          </section>
+            <button
+              type="button"
+              onClick={() => setControlsOpen((current) => !current)}
+              className={classNames(
+                "flex",
+                "w-full",
+                "items-center",
+                "justify-between",
+                "bg-[#18131a]/88",
+                "px-4",
+                "py-3",
+                "text-left",
+                "text-sm",
+                "font-semibold",
+                "text-[#ece7dc]/80",
+                "lg:hidden",
+              )}
+              aria-expanded={controlsOpen}
+              aria-controls="pixel-lab-controls"
+            >
+              <span>設定を開く</span>
+              <span>{controlsOpen ? "閉じる" : "開く"}</span>
+            </button>
 
-          <section
-            className={classNames("order-3", "space-y-1", "px-1", "text-xs", "text-zinc-100/45")}
-          >
-            <p>
-              粒度 {studio.settings.sampleSize} / 描画ブロック {studio.settings.pixelSize} / 色数{" "}
-              {studio.settings.paletteSize}
-            </p>
-            <p>URL入力なら共有できます。アップロード画像は保存されません。</p>
-          </section>
-        </main>
+            <div
+              id="pixel-lab-controls"
+              className={classNames("space-y-4", controlsOpen ? "block" : "hidden", "lg:block")}
+            >
+              <section
+                className={classNames(
+                  "bg-[#18131a]/88",
+                  "p-4",
+                  "shadow-[3px_3px_0_rgba(0,0,0,0.18)]",
+                )}
+              >
+                <h2 className={classNames("mb-3", "text-sm", "font-bold", "text-[#ece7dc]/82")}>
+                  画像を読み込む
+                </h2>
+                <ImageSourcePicker
+                  sourceKind={studio.sourceKind}
+                  source={studio.source}
+                  fileError={studio.fileError}
+                  onSourceKindChange={studio.setSourceKind}
+                  onUrlChange={studio.setUrl}
+                  onFileChange={studio.setUploadFile}
+                />
+              </section>
+              <ControlBar
+                settings={studio.settings}
+                outputEstimate={studio.outputEstimate}
+                onSettingChange={studio.setSetting}
+              />
+              <OutputActions
+                apiUrl={studio.result.apiUrl}
+                canShareApiUrl={studio.result.canShareApiUrl}
+                hasGeneratedImage={Boolean(studio.result.generatedPreviewUrl)}
+                copied={studio.copied}
+                onCopyApiUrl={studio.copyApiUrl}
+                onDownload={studio.downloadResult}
+                onReset={studio.reset}
+                compact
+              />
+            </div>
+          </aside>
+
+          <main className={classNames("order-1", "flex", "flex-col", "gap-5", "lg:order-2")}>
+            <article
+              className={classNames(
+                "order-1",
+                "bg-[#18141b]",
+                "shadow-[0_28px_80px_rgba(0,0,0,0.44),-10px_10px_0_rgba(168,184,156,0.035)]",
+              )}
+            >
+              <div
+                className={classNames(
+                  "flex",
+                  "flex-wrap",
+                  "items-center",
+                  "justify-between",
+                  "gap-2",
+                  "border-b",
+                  "border-[#a8b89c]/12",
+                  "px-3",
+                  "py-2",
+                  "text-xs",
+                  "text-[#c7c0b5]/62",
+                  "lg:px-5",
+                )}
+              >
+                <span>No.001 画像を変換する</span>
+                <span>{studio.result.isLoading ? "変換中" : "プレビュー"}</span>
+              </div>
+              <div className={classNames("p-3", "lg:p-5")}>
+                <BeforeAfterPreview
+                  originalImageUrl={studio.result.originalPreviewUrl}
+                  generatedImageUrl={studio.result.generatedPreviewUrl}
+                  isLoading={studio.result.isLoading}
+                  errorMessage={studio.result.errorMessage}
+                  frameClassName="min-h-[22rem] bg-[#09090d] lg:min-h-[36rem]"
+                />
+              </div>
+            </article>
+
+            <section
+              className={classNames(
+                "order-2",
+                "grid",
+                "gap-3",
+                "px-1",
+                "text-xs",
+                "text-[#c7c0b5]/50",
+                "sm:grid-cols-4",
+              )}
+            >
+              <p>
+                入力 <span className={classNames("text-[#ece7dc]/72")}>{sourceLabel}</span>
+              </p>
+              <p>
+                共有 <span className={classNames("text-[#ece7dc]/72")}>{shareLabel}</span>
+              </p>
+              <p>
+                色数{" "}
+                <span className={classNames("text-[#ece7dc]/72")}>
+                  {studio.settings.paletteSize}
+                </span>
+              </p>
+              <p>
+                表示効果{" "}
+                <span className={classNames("text-[#ece7dc]/72")}>
+                  {studio.settings.tvEffectEnabled ? "あり" : "なし"}
+                </span>
+              </p>
+            </section>
+
+            <section
+              className={classNames("order-3", "space-y-1", "px-1", "text-xs", "text-[#c7c0b5]/45")}
+            >
+              <p>
+                粒度 {studio.settings.sampleSize} / 描画ブロック {studio.settings.pixelSize} / 色数{" "}
+                {studio.settings.paletteSize}
+              </p>
+              <p>URL入力なら共有できます。アップロード画像は保存されません。</p>
+            </section>
+          </main>
+        </div>
       </div>
     </div>
   );
