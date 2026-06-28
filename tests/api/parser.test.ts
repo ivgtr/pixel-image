@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { parseRequest } from "../../src/server/pixelImage/parser";
+import { parsePostRequest, parseRequest } from "../../src/server/pixelImage/parser";
 import { DEFAULT_TV_EFFECT_STRENGTH } from "../../src/server/pixelImage/tvEffect/types";
 
 const requestWithQuery = (query: Record<string, string | string[] | undefined>) => {
   return { query } as Parameters<typeof parseRequest>[0];
+};
+
+const requestWithBody = (body: Record<string, unknown>) => {
+  return { body } as Parameters<typeof parsePostRequest>[0];
 };
 
 describe("parseRequest", () => {
@@ -214,5 +218,62 @@ describe("parseRequest", () => {
         strength: DEFAULT_TV_EFFECT_STRENGTH,
       }),
     );
+  });
+});
+
+describe("parsePostRequest", () => {
+  it("parses upload body values", () => {
+    expect(
+      parsePostRequest(
+        requestWithBody({
+          imageDataUrl: "data:image/png;base64,AAAA",
+          type: "png",
+          sampleSize: "8",
+          pixelSize: "16",
+          k: "6",
+          tv: "1",
+          tvPreset: "crt",
+          tvStrength: "80",
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        image: "local-upload",
+        imageDataUrl: "data:image/png;base64,AAAA",
+        type: "png",
+        sampleSize: 8,
+        pixelSize: 16,
+        k: 6,
+        tvEffect: expect.objectContaining({
+          enabled: true,
+          preset: "crt",
+          strength: 80,
+        }),
+      }),
+    );
+  });
+
+  it("rejects invalid upload body shapes", () => {
+    expect(() => parsePostRequest({ body: undefined } as Parameters<typeof parsePostRequest>[0]))
+      .toThrow("request body must be a JSON object");
+    expect(() => parsePostRequest(requestWithBody({ type: "png" }))).toThrow(
+      "imageDataUrl is required",
+    );
+    expect(() =>
+      parsePostRequest(
+        requestWithBody({
+          imageDataUrl: "data:image/png;base64,AAAA",
+          type: "gif",
+        }),
+      ),
+    ).toThrow("type must be jpeg or png");
+    expect(() =>
+      parsePostRequest(
+        requestWithBody({
+          imageDataUrl: "data:image/png;base64,AAAA",
+          sampleSize: ["8"],
+        }),
+      ),
+    ).toThrow("must not be array");
   });
 });

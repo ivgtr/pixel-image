@@ -19,8 +19,20 @@ export const createImage = async ({
   k,
   tvEffect,
 }: ParsedOptions): Promise<string | Buffer> => {
-  // 画像のデータを取得
   const { imageBuffer } = await analyzeImage(image);
+  return createImageFromBuffer(imageBuffer, { type, sampleSize, pixelSize, k, tvEffect });
+};
+
+export const createImageFromBuffer = async (
+  imageBuffer: Buffer,
+  {
+    type,
+    sampleSize,
+    pixelSize,
+    k,
+    tvEffect,
+  }: Pick<ParsedOptions, "type" | "sampleSize" | "pixelSize" | "k" | "tvEffect">,
+): Promise<string | Buffer> => {
   const img = await loadImage(imageBuffer);
   const { width, height } = img;
 
@@ -45,12 +57,7 @@ export const createImage = async ({
     for (let j = 0; j < rHeight; j++) {
       const cellWidth = Math.min(sampleSize, width - i * sampleSize);
       const cellHeight = Math.min(sampleSize, height - j * sampleSize);
-      const cell = imageCtx.getImageData(
-        i * sampleSize,
-        j * sampleSize,
-        cellWidth,
-        cellHeight,
-      );
+      const cell = imageCtx.getImageData(i * sampleSize, j * sampleSize, cellWidth, cellHeight);
       const cellData = cell.data;
       let avgR = 0;
       let avgG = 0;

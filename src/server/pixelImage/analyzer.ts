@@ -6,6 +6,7 @@ import type { OptionalType } from "./parser";
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_REDIRECTS = 3;
+const DATA_URL_PATTERN = /^data:(image\/(?:png|jpeg));base64,([A-Za-z0-9+/]+={0,2})$/;
 
 const isOptionalType = (type: string): type is OptionalType => {
   return ["jpeg", "png"].includes(type);
@@ -147,4 +148,22 @@ export const analyzeImage = async (url: string) => {
   } finally {
     clearTimeout(timeout);
   }
+};
+
+export const analyzeUploadedImage = (dataUrl: string) => {
+  const matched = dataUrl.match(DATA_URL_PATTERN);
+  if (!matched) {
+    throw new UpstreamImageError("imageDataUrl must be a PNG or JPEG data URL");
+  }
+
+  const [, , base64] = matched;
+  const imageBuffer = Buffer.from(base64, "base64");
+  if (imageBuffer.length === 0) {
+    throw new UpstreamImageError("imageDataUrl is empty");
+  }
+  if (imageBuffer.length > MAX_IMAGE_BYTES) {
+    throw new UpstreamImageError("image is too large");
+  }
+
+  return { imageBuffer };
 };

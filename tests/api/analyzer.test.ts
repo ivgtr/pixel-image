@@ -1,6 +1,10 @@
 import { lookup } from "node:dns/promises";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { analyzeImage, isBlockedAddress } from "../../src/server/pixelImage/analyzer";
+import {
+  analyzeImage,
+  analyzeUploadedImage,
+  isBlockedAddress,
+} from "../../src/server/pixelImage/analyzer";
 
 vi.mock("node:dns/promises", () => ({
   lookup: vi.fn(),
@@ -90,5 +94,33 @@ describe("analyzeImage", () => {
     await expect(analyzeImage("https://example.com/image.png")).resolves.toEqual({
       imageBuffer: Buffer.from([1, 2, 3]),
     });
+  });
+});
+
+describe("analyzeUploadedImage", () => {
+  it("accepts png and jpeg data URLs", () => {
+    expect(analyzeUploadedImage("data:image/png;base64,AQID")).toEqual({
+      imageBuffer: Buffer.from([1, 2, 3]),
+    });
+    expect(analyzeUploadedImage("data:image/jpeg;base64,AQID")).toEqual({
+      imageBuffer: Buffer.from([1, 2, 3]),
+    });
+  });
+
+  it("rejects invalid data URLs", () => {
+    expect(() => analyzeUploadedImage("https://example.com/image.png")).toThrow(
+      "imageDataUrl must be a PNG or JPEG data URL",
+    );
+    expect(() => analyzeUploadedImage("data:image/gif;base64,AQID")).toThrow(
+      "imageDataUrl must be a PNG or JPEG data URL",
+    );
+  });
+
+  it("rejects oversized upload images", () => {
+    const oversized = Buffer.alloc(5 * 1024 * 1024 + 1).toString("base64");
+
+    expect(() => analyzeUploadedImage(`data:image/png;base64,${oversized}`)).toThrow(
+      "image is too large",
+    );
   });
 });
