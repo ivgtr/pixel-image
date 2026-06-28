@@ -1,6 +1,6 @@
 import { createCanvas, loadImage } from "canvas";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { analyzeImage } from "../../src/server/pixelImage/analyzer";
+import { analyzeImage, analyzeUploadedImage } from "../../src/server/pixelImage/analyzer";
 import { createImage } from "../../src/server/pixelImage/createImage";
 import type { ParsedOptions } from "../../src/server/pixelImage/parser";
 import { createTvEffectOptions } from "../../src/server/pixelImage/tvEffect/presets";
@@ -8,9 +8,11 @@ import type { TvEffectPreset } from "../../src/server/pixelImage/tvEffect/types"
 
 vi.mock("../../src/server/pixelImage/analyzer", () => ({
   analyzeImage: vi.fn(),
+  analyzeUploadedImage: vi.fn(),
 }));
 
 const mockAnalyzeImage = vi.mocked(analyzeImage);
+const mockAnalyzeUploadedImage = vi.mocked(analyzeUploadedImage);
 
 const createSourcePng = (width: number, height: number): Buffer => {
   const canvas = createCanvas(width, height);
@@ -35,6 +37,7 @@ const createOptions = ({
   k = 2,
   tv = false,
   preset = "soft-tv",
+  imageDataUrl,
 }: {
   size: number;
   sampleSize?: number;
@@ -42,8 +45,10 @@ const createOptions = ({
   k?: number;
   tv?: boolean;
   preset?: TvEffectPreset;
+  imageDataUrl?: string;
 }): ParsedOptions => ({
   image: "https://example.com/image.png",
+  imageDataUrl,
   type: "png" as const,
   size,
   sampleSize,
@@ -55,6 +60,7 @@ const createOptions = ({
 describe("createImage", () => {
   beforeEach(() => {
     mockAnalyzeImage.mockReset();
+    mockAnalyzeUploadedImage.mockReset();
   });
 
   it("keeps square output dimensions for size compatibility", async () => {
@@ -105,6 +111,19 @@ describe("createImage", () => {
 
     expect(image.width).toBe(10);
     expect(image.height).toBe(10);
+  });
+
+  it("uses uploaded data URL buffers without remote analysis", async () => {
+    const imageDataUrl = "data:image/png;base64,AQID";
+    mockAnalyzeUploadedImage.mockReturnValue({ imageBuffer: createMockImageBuffer(20, 20), type: "png" });
+
+    const buffer = await createImage(createOptions({ size: 10, imageDataUrl }));
+    const image = await loadImage(buffer as Buffer);
+
+    expect(mockAnalyzeUploadedImage).toHaveBeenCalledWith(imageDataUrl);
+    expect(mockAnalyzeImage).not.toHaveBeenCalled();
+    expect(image.width).toBe(20);
+    expect(image.height).toBe(20);
   });
 
   it("is deterministic for the same input", async () => {
