@@ -36,39 +36,37 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
             className={classNames(
               "flex",
               "flex-col",
-              "gap-3",
+              "gap-4",
               "md:flex-row",
-              "md:items-end",
+              "md:items-center",
               "md:justify-between",
             )}
           >
             <div>
-              <nav
-                aria-label="site notes"
-                className={classNames(
-                  "mb-2",
-                  "flex",
-                  "flex-wrap",
-                  "gap-x-3",
-                  "gap-y-1",
-                  "text-xs",
-                  "text-[#a8b89c]/70",
-                )}
-              >
-                <span>top</span>
-                <span>load</span>
-                <span>compare</span>
-                <span>save</span>
-              </nav>
               <h1
                 className={classNames("text-3xl", "font-black", "leading-none", "text-[#ece7dc]")}
               >
                 Pixel Image
               </h1>
+              <p className={classNames("mt-2", "text-sm", "text-[#a8b89c]/72")}>
+                画像を、粗く、軽く、絵のように。
+              </p>
             </div>
-            <p className={classNames("max-w-md", "text-sm", "leading-6", "text-[#c7c0b5]/62")}>
-              色と粒度を調整して、画像の見え方を変える。元画像と変換後を見比べながら調整できます。
-            </p>
+            <div
+              className={classNames(
+                "max-w-xl",
+                "space-y-2",
+                "text-sm",
+                "leading-6",
+                "text-[#c7c0b5]/66",
+                "md:text-right",
+              )}
+            >
+              <p>色数と粒度を調整して、元画像と変換後を見比べられます。</p>
+              <p className={classNames("text-xs", "text-[#a8b89c]/60")}>
+                URL入力 / アップロード / 比較 / 保存
+              </p>
+            </div>
           </div>
         </header>
 
