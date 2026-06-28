@@ -34,19 +34,8 @@ const presets = [
 ];
 
 const ControlSection = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <section className={classNames("space-y-3", "border-t", "border-cyan-200/10", "pt-4")}>
-    <h3
-      className={classNames(
-        "font-mono",
-        "text-[0.7rem]",
-        "font-bold",
-        "uppercase",
-        "tracking-[0.18em]",
-        "text-cyan-200/70",
-      )}
-    >
-      {label}
-    </h3>
+  <section className={classNames("space-y-3", "border-t", "border-zinc-100/10", "pt-4")}>
+    <h3 className={classNames("text-xs", "font-bold", "text-zinc-100/65")}>{label}</h3>
     {children}
   </section>
 );
@@ -68,15 +57,15 @@ const SliderField = ({
   help: string;
   onChange: (value: string) => void;
 }) => (
-  <label htmlFor={id} className={classNames("block", "space-y-2", "font-mono")}>
+  <label htmlFor={id} className={classNames("block", "space-y-2")}>
     <span className={classNames("flex", "items-center", "justify-between", "gap-3")}>
-      <span className={classNames("text-xs", "font-semibold")}>{label}</span>
+      <span className={classNames("text-sm", "font-semibold", "text-zinc-100/85")}>{label}</span>
       <span
         className={classNames(
           "min-w-[3rem]",
           "border",
-          "border-cyan-100/15",
-          "bg-[#05070b]",
+          "border-zinc-100/10",
+          "bg-[#101117]",
           "px-2",
           "py-1",
           "text-center",
@@ -96,7 +85,7 @@ const SliderField = ({
       onChange={(event) => onChange(event.currentTarget.value)}
       className={classNames("w-full", "accent-current")}
     />
-    <span className={classNames("block", "text-xs", "text-cyan-100/55")}>{help}</span>
+    <span className={classNames("block", "text-xs", "text-zinc-100/50")}>{help}</span>
   </label>
 );
 
@@ -106,30 +95,18 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
       className={classNames(
         "space-y-5",
         "border",
-        "border-cyan-300/20",
-        "bg-[#080d12]/90",
+        "border-zinc-100/10",
+        "bg-[#101117]/85",
         "p-4",
-        "text-cyan-50",
+        "text-zinc-100",
       )}
     >
       <div>
-        <h2
-          className={classNames(
-            "font-mono",
-            "text-xs",
-            "font-bold",
-            "uppercase",
-            "tracking-[0.16em]",
-          )}
-        >
-          設定端末
-        </h2>
-        <p className={classNames("mt-1", "font-mono", "text-xs", "text-cyan-100/55")}>
-          {outputEstimate}
-        </p>
+        <h2 className={classNames("text-sm", "font-bold")}>変換設定</h2>
+        <p className={classNames("mt-1", "text-xs", "text-zinc-100/45")}>{outputEstimate}</p>
       </div>
 
-      <ControlSection label="preset tags">
+      <ControlSection label="プリセット">
         <div className={classNames("grid", "gap-2")}>
           {presets.map((preset) => (
             <button
@@ -142,17 +119,16 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
               }}
               className={classNames(
                 "border",
-                "border-cyan-200/20",
-                "bg-[#05070b]/75",
+                "border-zinc-100/10",
+                "bg-[#0c0d12]",
                 "px-3",
                 "py-2",
                 "text-left",
-                "font-mono",
-                "text-xs",
+                "text-sm",
                 "font-semibold",
-                "text-cyan-50",
-                "hover:border-cyan-200/60",
-                "focus:border-cyan-100",
+                "text-zinc-100/80",
+                "hover:border-zinc-100/25",
+                "focus:border-zinc-100/45",
                 "focus:outline-none",
               )}
             >
@@ -162,7 +138,7 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
         </div>
       </ControlSection>
 
-      <ControlSection label="sampling">
+      <ControlSection label="粒度">
         <SliderField
           id="sample-size"
           label="サンプリング"
@@ -174,7 +150,7 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
         />
       </ControlSection>
 
-      <ControlSection label="draw block">
+      <ControlSection label="描画">
         <SliderField
           id="pixel-size"
           label="描画ブロック"
@@ -186,7 +162,7 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
         />
       </ControlSection>
 
-      <ControlSection label="palette">
+      <ControlSection label="色">
         <SliderField
           id="palette-size"
           label="色数"
@@ -198,7 +174,7 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
         />
       </ControlSection>
 
-      <ControlSection label="display effect">
+      <ControlSection label="表示効果">
         <label htmlFor="tv-effect-enabled" className={classNames("flex", "items-center", "gap-3")}>
           <input
             id="tv-effect-enabled"
@@ -207,13 +183,11 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
             onChange={(event) => onSettingChange("tvEffectEnabled", event.currentTarget.checked)}
             className={classNames("h-5", "w-5", "accent-current")}
           />
-          <span className={classNames("font-mono", "text-xs", "font-semibold")}>TV表示</span>
+          <span className={classNames("text-sm", "font-semibold")}>TV表示</span>
         </label>
 
         <label htmlFor="tv-effect-preset" className={classNames("block", "space-y-1")}>
-          <span className={classNames("font-mono", "text-xs", "font-semibold", "uppercase")}>
-            preset
-          </span>
+          <span className={classNames("text-xs", "font-semibold")}>種類</span>
           <select
             id="tv-effect-preset"
             value={settings.tvEffectPreset}
@@ -223,13 +197,12 @@ export const ControlBar = ({ settings, outputEstimate, onSettingChange }: Contro
             className={classNames(
               "w-full",
               "border",
-              "border-cyan-100/15",
-              "bg-[#05070b]",
+              "border-zinc-100/10",
+              "bg-[#101117]",
               "px-3",
               "py-2",
-              "font-mono",
               "text-sm",
-              "text-cyan-50",
+              "text-zinc-100",
             )}
           >
             <option value="soft-tv">Soft TV</option>

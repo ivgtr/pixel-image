@@ -7,27 +7,18 @@ import { OutputActions } from "../../OutputActions";
 import type { PixelImageStudioState } from "../types";
 
 export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) => {
-  const sourceLabel = studio.sourceKind === "url" ? "Remote URL" : "Local upload";
-  const shareLabel = studio.result.canShareApiUrl ? "Shareable" : "Local only";
   const [controlsOpen, setControlsOpen] = useState(false);
-  const logLines = [
-    `source: ${sourceLabel}`,
-    `sample: ${studio.settings.sampleSize}px`,
-    `block: ${studio.settings.pixelSize}px`,
-    `colors: ${studio.settings.paletteSize}`,
-    `status: ${studio.status}`,
-  ];
+  const sourceLabel = studio.sourceKind === "url" ? "URL" : "アップロード";
+  const shareLabel = studio.result.canShareApiUrl ? "共有できます" : "この画面だけ";
 
   return (
     <div
       className={classNames(
         "min-h-screen",
-        "bg-[#06070d]",
-        "bg-[linear-gradient(rgba(103,232,249,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.045)_1px,transparent_1px)]",
-        "bg-[size:22px_22px]",
+        "bg-[#0b0b10]",
         "px-4",
-        "py-4",
-        "text-cyan-50",
+        "py-5",
+        "text-zinc-100",
         "md:px-6",
       )}
     >
@@ -36,8 +27,8 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
           "mx-auto",
           "grid",
           "max-w-[92rem]",
-          "gap-5",
-          "lg:grid-cols-[23rem_minmax(0,1fr)]",
+          "gap-6",
+          "lg:grid-cols-[21rem_minmax(0,1fr)]",
         )}
       >
         <aside
@@ -46,75 +37,31 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
             "space-y-4",
             "lg:order-1",
             "lg:sticky",
-            "lg:top-4",
+            "lg:top-5",
             "lg:self-start",
           )}
         >
-          <header
-            className={classNames(
-              "border",
-              "border-cyan-300/20",
-              "bg-[#080d12]/95",
-              "p-4",
-              "shadow-[4px_4px_0_rgba(244,194,214,0.12)]",
-            )}
-          >
+          <header className={classNames("bg-[#111218]/82", "p-4")}>
             <div className={classNames("flex", "items-start", "justify-between", "gap-3")}>
               <div>
-                <div className={classNames("mb-2", "flex", "items-center", "gap-2")}>
-                  <span className={classNames("h-2", "w-2", "bg-emerald-300")} />
-                  <p
-                    className={classNames(
-                      "font-mono",
-                      "text-xs",
-                      "uppercase",
-                      "tracking-[0.22em]",
-                      "text-cyan-100/70",
-                    )}
-                  >
-                    pixel-image/wiki
-                  </p>
-                </div>
                 <h1 className={classNames("text-2xl", "font-black", "leading-tight")}>
-                  深夜のドット絵作業台
+                  Pixel Image
                 </h1>
+                <p className={classNames("mt-2", "text-sm", "leading-6", "text-zinc-100/58")}>
+                  画像を、粗く、軽く、絵のように。
+                </p>
               </div>
               <span
                 className={classNames(
-                  "border",
-                  "border-cyan-200/20",
-                  "bg-[#05070b]",
-                  "px-2",
-                  "py-1",
-                  "font-mono",
+                  "bg-zinc-100/8",
+                  "px-2.5",
+                  "py-1.5",
                   "text-xs",
-                  "font-bold",
-                  "uppercase",
+                  "text-zinc-100/55",
                 )}
               >
-                {studio.status}
+                {studio.result.isLoading ? "変換中" : "プレビュー"}
               </span>
-            </div>
-            <p className={classNames("mt-3", "text-sm", "leading-6", "text-cyan-100/65")}>
-              画像を読み込み、サンプリングと色数を調整して、変換後の見え方を比べます。
-            </p>
-            <div className={classNames("mt-3", "flex", "flex-wrap", "gap-2", "font-mono")}>
-              {["#pixel-art", "#before-after", "#api-url"].map((tag) => (
-                <span
-                  key={tag}
-                  className={classNames(
-                    "border",
-                    "border-cyan-100/15",
-                    "bg-[#05070b]",
-                    "px-2",
-                    "py-1",
-                    "text-[0.68rem]",
-                    "text-cyan-100/65",
-                  )}
-                >
-                  {tag}
-                </span>
-              ))}
             </div>
           </header>
 
@@ -126,41 +73,28 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
               "w-full",
               "items-center",
               "justify-between",
-              "border",
-              "border-cyan-300/20",
-              "bg-[#080d12]/95",
+              "bg-[#111218]/82",
               "px-4",
               "py-3",
               "text-left",
               "text-sm",
-              "font-bold",
-              "uppercase",
-              "tracking-[0.14em]",
-              "text-cyan-50",
+              "font-semibold",
+              "text-zinc-100/82",
               "lg:hidden",
             )}
             aria-expanded={controlsOpen}
             aria-controls="pixel-lab-controls"
           >
             <span>設定を開く</span>
-            <span className={classNames("font-mono")}>{controlsOpen ? "[close]" : "[open]"}</span>
+            <span>{controlsOpen ? "閉じる" : "開く"}</span>
           </button>
 
           <div
             id="pixel-lab-controls"
             className={classNames("space-y-4", controlsOpen ? "block" : "hidden", "lg:block")}
           >
-            <div className={classNames("border", "border-cyan-300/20", "bg-[#080d12]/90", "p-4")}>
-              <h2
-                className={classNames(
-                  "mb-3",
-                  "text-xs",
-                  "font-bold",
-                  "uppercase",
-                  "tracking-[0.18em]",
-                  "text-cyan-200/70",
-                )}
-              >
+            <section className={classNames("bg-[#111218]/82", "p-4")}>
+              <h2 className={classNames("mb-3", "text-sm", "font-bold", "text-zinc-100/82")}>
                 画像を読み込む
               </h2>
               <ImageSourcePicker
@@ -171,7 +105,7 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
                 onUrlChange={studio.setUrl}
                 onFileChange={studio.setUploadFile}
               />
-            </div>
+            </section>
             <ControlBar
               settings={studio.settings}
               outputEstimate={studio.outputEstimate}
@@ -190,63 +124,14 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
           </div>
         </aside>
 
-        <main className={classNames("order-1", "flex", "flex-col", "gap-4", "lg:order-2")}>
-          <section
-            className={classNames(
-              "order-2",
-              "grid",
-              "gap-2",
-              "border",
-              "border-cyan-300/20",
-              "bg-[#080d12]/90",
-              "p-3",
-              "font-mono",
-              "text-xs",
-              "text-cyan-100/75",
-              "sm:grid-cols-4",
-              "lg:order-1",
-            )}
-          >
-            <div>
-              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
-                source
-              </span>
-              <span className={classNames("font-semibold")}>{sourceLabel}</span>
-            </div>
-            <div>
-              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
-                artifact
-              </span>
-              <span className={classNames("font-semibold")}>{shareLabel}</span>
-            </div>
-            <div>
-              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
-                palette
-              </span>
-              <span className={classNames("font-semibold")}>
-                {studio.settings.paletteSize} colors
-              </span>
-            </div>
-            <div>
-              <span className={classNames("block", "uppercase", "tracking-[0.16em]", "opacity-60")}>
-                tv
-              </span>
-              <span className={classNames("font-semibold")}>
-                {studio.settings.tvEffectEnabled ? studio.settings.tvEffectPreset : "Off"}
-              </span>
-            </div>
-          </section>
-
+        <main className={classNames("order-1", "flex", "flex-col", "gap-5", "lg:order-2")}>
           <div
             className={classNames(
               "order-1",
-              "border",
-              "border-cyan-300/20",
-              "bg-[linear-gradient(rgba(103,232,249,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(103,232,249,0.08)_1px,transparent_1px)]",
-              "bg-[size:18px_18px]",
-              "p-2",
-              "lg:order-2",
-              "lg:p-3",
+              "bg-[#121218]",
+              "p-3",
+              "shadow-[0_28px_80px_rgba(0,0,0,0.38)]",
+              "lg:p-5",
             )}
           >
             <BeforeAfterPreview
@@ -254,55 +139,47 @@ export const PixelLabVariant = ({ studio }: { studio: PixelImageStudioState }) =
               generatedImageUrl={studio.result.generatedPreviewUrl}
               isLoading={studio.result.isLoading}
               errorMessage={studio.result.errorMessage}
-              frameClassName="min-h-[22rem] border border-cyan-200/20 bg-[#080d12] lg:min-h-[36rem]"
+              frameClassName="min-h-[22rem] bg-[#08090d] lg:min-h-[36rem]"
             />
           </div>
+
           <section
             className={classNames(
-              "order-3",
+              "order-2",
               "grid",
               "gap-3",
-              "border",
-              "border-cyan-300/20",
-              "bg-[#080d12]/90",
-              "p-3",
-              "font-mono",
+              "px-1",
               "text-xs",
-              "text-cyan-100/70",
-              "md:grid-cols-[1fr_1fr]",
+              "text-zinc-100/48",
+              "sm:grid-cols-4",
             )}
           >
-            <div>
-              <h2 className={classNames("mb-2", "font-bold", "uppercase", "tracking-[0.16em]")}>
-                処理ログ
-              </h2>
-              <ol className={classNames("space-y-1")}>
-                {logLines.map((line) => (
-                  <li key={line} className={classNames("text-cyan-100/60")}>
-                    &gt; {line}
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div
-              className={classNames(
-                "border-t",
-                "border-cyan-100/10",
-                "pt-3",
-                "md:border-l",
-                "md:border-t-0",
-                "md:pl-3",
-                "md:pt-0",
-              )}
-            >
-              <h2 className={classNames("mb-2", "font-bold", "uppercase", "tracking-[0.16em]")}>
-                出力メモ
-              </h2>
-              <p className={classNames("text-cyan-100/60")}>{studio.outputEstimate}</p>
-              <p className={classNames("mt-2", "text-cyan-100/45")}>
-                URL入力なら貼れるAPI URLを作成。Uploadはこの画面だけで処理します。
-              </p>
-            </div>
+            <p>
+              入力 <span className={classNames("text-zinc-100/70")}>{sourceLabel}</span>
+            </p>
+            <p>
+              共有 <span className={classNames("text-zinc-100/70")}>{shareLabel}</span>
+            </p>
+            <p>
+              色数{" "}
+              <span className={classNames("text-zinc-100/70")}>{studio.settings.paletteSize}</span>
+            </p>
+            <p>
+              表示効果{" "}
+              <span className={classNames("text-zinc-100/70")}>
+                {studio.settings.tvEffectEnabled ? "あり" : "なし"}
+              </span>
+            </p>
+          </section>
+
+          <section
+            className={classNames("order-3", "space-y-1", "px-1", "text-xs", "text-zinc-100/45")}
+          >
+            <p>
+              粒度 {studio.settings.sampleSize} / 描画ブロック {studio.settings.pixelSize} / 色数{" "}
+              {studio.settings.paletteSize}
+            </p>
+            <p>URL入力なら共有できます。アップロード画像は保存されません。</p>
           </section>
         </main>
       </div>

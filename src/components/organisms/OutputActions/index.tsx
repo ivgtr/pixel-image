@@ -24,23 +24,12 @@ export const OutputActions = ({
 }: OutputActionsProps) => {
   return (
     <section
-      className={classNames("space-y-3", "border", "border-cyan-100/15", "bg-[#080d12]/90", "p-4")}
+      className={classNames("space-y-3", "border", "border-zinc-100/10", "bg-[#101117]/85", "p-4")}
     >
       <div className={classNames("flex", "items-center", "justify-between", "gap-3")}>
-        <h2
-          className={classNames(
-            "font-mono",
-            "text-xs",
-            "font-bold",
-            "uppercase",
-            "tracking-[0.16em]",
-            "text-cyan-50",
-          )}
-        >
-          出力
-        </h2>
-        <span className={classNames("font-mono", "text-[0.68rem]", "text-pink-100/70")}>
-          {canShareApiUrl ? "[shareable]" : "[local-only]"}
+        <h2 className={classNames("text-sm", "font-bold", "text-zinc-100")}>保存と共有</h2>
+        <span className={classNames("text-xs", "text-zinc-100/45")}>
+          {canShareApiUrl ? "共有できます" : "この画面だけ"}
         </span>
       </div>
       <div className={classNames("grid", "gap-2", compact ? "grid-cols-1" : "sm:grid-cols-3")}>
@@ -52,12 +41,11 @@ export const OutputActions = ({
             "border",
             "px-3",
             "py-2",
-            "font-mono",
-            "text-xs",
+            "text-sm",
             "font-semibold",
             canShareApiUrl
-              ? "border-cyan-100 bg-cyan-50 text-[#061014]"
-              : "cursor-not-allowed border-cyan-100/10 bg-white/5 text-cyan-50/35",
+              ? "border-zinc-100/30 bg-zinc-100/90 text-[#111218]"
+              : "cursor-not-allowed border-zinc-100/10 bg-white/5 text-zinc-100/35",
           )}
         >
           {copied ? "コピー済み" : "API URLをコピー"}
@@ -70,12 +58,11 @@ export const OutputActions = ({
             "border",
             "px-3",
             "py-2",
-            "font-mono",
-            "text-xs",
+            "text-sm",
             "font-semibold",
             hasGeneratedImage
-              ? "border-pink-100 bg-pink-100 text-[#160b12]"
-              : "cursor-not-allowed border-cyan-100/10 bg-white/5 text-cyan-50/35",
+              ? "border-rose-100/50 bg-rose-100/90 text-[#171116]"
+              : "cursor-not-allowed border-zinc-100/10 bg-white/5 text-zinc-100/35",
           )}
         >
           PNGを保存
@@ -85,14 +72,13 @@ export const OutputActions = ({
           onClick={onReset}
           className={classNames(
             "border",
-            "border-cyan-100/15",
-            "bg-[#05070b]",
+            "border-zinc-100/10",
+            "bg-[#0c0d12]",
             "px-3",
             "py-2",
-            "font-mono",
-            "text-xs",
+            "text-sm",
             "font-semibold",
-            "text-cyan-50",
+            "text-zinc-100/75",
           )}
         >
           もう一度試す
@@ -102,12 +88,11 @@ export const OutputActions = ({
       <div
         className={classNames(
           "border",
-          "border-cyan-100/10",
-          "bg-[#05070b]",
+          "border-zinc-100/10",
+          "bg-[#0c0d12]",
           "p-3",
-          "font-mono",
           "text-xs",
-          "text-cyan-100/60",
+          "text-zinc-100/50",
         )}
       >
         {canShareApiUrl && apiUrl ? (

@@ -23,7 +23,7 @@ const ImagePane = ({
       "relative",
       "min-h-[22rem]",
       "overflow-hidden",
-      "bg-[#05070b]",
+      "bg-[#08090d]",
       "md:min-h-[36rem]",
     )}
   >
@@ -33,17 +33,12 @@ const ImagePane = ({
         "left-3",
         "top-3",
         "z-10",
-        "border",
-        "border-cyan-100/20",
-        "bg-[#05070b]/85",
+        "bg-[#08090d]/75",
         "px-2",
         "py-1",
-        "font-mono",
-        "text-[0.68rem]",
+        "text-xs",
         "font-semibold",
-        "uppercase",
-        "tracking-[0.14em]",
-        "text-cyan-50",
+        "text-zinc-100/75",
       )}
     >
       {label}
@@ -61,8 +56,7 @@ const ImagePane = ({
           "p-8",
           "text-center",
           "text-sm",
-          "font-mono",
-          "text-cyan-100/45",
+          "text-zinc-100/45",
         )}
       >
         画像を読み込むとここに表示されます
@@ -92,11 +86,10 @@ export const BeforeAfterPreview = ({
             "flex",
             "items-center",
             "justify-center",
-            "bg-[#05070b]/75",
-            "font-mono",
-            "text-xs",
+            "bg-[#08090d]/75",
+            "text-sm",
             "font-semibold",
-            "text-cyan-50",
+            "text-zinc-100",
           )}
         >
           変換中...
@@ -112,12 +105,11 @@ export const BeforeAfterPreview = ({
             "right-3",
             "z-30",
             "border",
-            "border-pink-200/60",
-            "bg-[#2b101b]/95",
+            "border-rose-200/40",
+            "bg-[#24131a]/95",
             "p-3",
-            "font-mono",
             "text-sm",
-            "text-pink-50",
+            "text-rose-50",
           )}
         >
           {errorMessage}
@@ -129,31 +121,6 @@ export const BeforeAfterPreview = ({
   return (
     <section className={classNames("relative", "overflow-hidden", frameClassName)}>
       <div
-        className={classNames(
-          "pointer-events-none",
-          "absolute",
-          "inset-x-0",
-          "top-0",
-          "z-10",
-          "flex",
-          "items-center",
-          "justify-between",
-          "border-b",
-          "border-cyan-100/10",
-          "bg-[#05070b]/70",
-          "px-3",
-          "py-2",
-          "font-mono",
-          "text-[0.65rem]",
-          "uppercase",
-          "tracking-[0.14em]",
-          "text-cyan-100/55",
-        )}
-      >
-        <span>preview.compare</span>
-        <span>object-contain</span>
-      </div>
-      <div
         className={classNames("hidden", "h-full", "overflow-hidden", "md:grid", "md:grid-cols-2")}
       >
         <ImagePane label="元画像" imageUrl={originalImageUrl} alt="Original image preview" />
@@ -161,7 +128,7 @@ export const BeforeAfterPreview = ({
       </div>
 
       <div className={classNames("md:hidden")}>
-        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-[#05070b]")}>
+        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-[#08090d]")}>
           <ImagePane label="元画像" imageUrl={originalImageUrl} alt="Original image preview" />
           <div
             className={classNames("absolute", "inset-0", "overflow-hidden")}
@@ -170,7 +137,7 @@ export const BeforeAfterPreview = ({
             <ImagePane label="変換後" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
           </div>
           <div
-            className={classNames("absolute", "inset-y-0", "z-10", "w-0.5", "bg-pink-100")}
+            className={classNames("absolute", "inset-y-0", "z-10", "w-0.5", "bg-rose-100/80")}
             style={{ left: `${mobileCompareNumber}%` }}
           />
         </div>
@@ -179,18 +146,17 @@ export const BeforeAfterPreview = ({
           className={classNames(
             "block",
             "border-t",
-            "border-cyan-200/10",
-            "bg-[#090d12]",
+            "border-zinc-100/10",
+            "bg-[#0f1015]",
             "p-3",
-            "font-mono",
             "text-xs",
             "font-semibold",
-            "text-cyan-100",
+            "text-zinc-100/75",
           )}
         >
           <span className={classNames("mb-2", "flex", "items-center", "justify-between", "gap-3")}>
             <span>元画像 / 変換後</span>
-            <span className={classNames("tabular-nums")}>after {mobileCompare}%</span>
+            <span className={classNames("tabular-nums")}>変換後 {mobileCompare}%</span>
           </span>
           <input
             id="before-after-mobile-slider"
@@ -199,7 +165,7 @@ export const BeforeAfterPreview = ({
             max="100"
             value={mobileCompare}
             onChange={(event) => setMobileCompare(event.currentTarget.value)}
-            className={classNames("w-full", "accent-cyan-200")}
+            className={classNames("w-full", "accent-rose-100")}
           />
         </label>
       </div>

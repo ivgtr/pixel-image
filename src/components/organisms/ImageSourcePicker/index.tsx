@@ -23,10 +23,10 @@ export const ImageSourcePicker = ({
 }: ImageSourcePickerProps) => {
   return (
     <section className={classNames("space-y-3")}>
-      <div className={classNames("grid", "grid-cols-2", "gap-1", "font-mono")}>
+      <div className={classNames("grid", "grid-cols-2", "gap-2")}>
         {[
-          ["url", "[url]"],
-          ["upload", "[upload]"],
+          ["url", "URL"],
+          ["upload", "アップロード"],
         ].map(([value, label]) => (
           <button
             key={value}
@@ -37,12 +37,11 @@ export const ImageSourcePicker = ({
               "border",
               "px-3",
               "py-2",
-              "text-xs",
+              "text-sm",
               "font-semibold",
-              "tracking-[0.08em]",
               sourceKind === value
-                ? "border-cyan-100 bg-cyan-50 text-[#061014]"
-                : "border-cyan-100/15 bg-[#05070b]/60 text-cyan-50/70 hover:border-cyan-100/35",
+                ? "border-zinc-100/40 bg-zinc-100/90 text-[#111218]"
+                : "border-zinc-100/10 bg-[#111218] text-zinc-100/65 hover:border-zinc-100/25",
             )}
           >
             {label}
@@ -63,16 +62,15 @@ export const ImageSourcePicker = ({
             className={classNames(
               "w-full",
               "border",
-              "border-cyan-100/15",
-              "bg-[#05070b]",
+              "border-zinc-100/10",
+              "bg-[#101117]",
               "px-3",
               "py-2",
-              "font-mono",
               "text-sm",
-              "text-cyan-50",
+              "text-zinc-100",
               "outline-none",
-              "placeholder:text-cyan-100/30",
-              "focus:border-cyan-100/70",
+              "placeholder:text-zinc-100/30",
+              "focus:border-zinc-100/45",
             )}
           />
           {!compact && (
@@ -94,13 +92,12 @@ export const ImageSourcePicker = ({
             className={classNames(
               "w-full",
               "border",
-              "border-cyan-100/15",
-              "bg-[#05070b]",
+              "border-zinc-100/10",
+              "bg-[#101117]",
               "px-3",
               "py-2",
-              "font-mono",
               "text-sm",
-              "text-cyan-50",
+              "text-zinc-100",
             )}
           />
           <p className={classNames("mt-1", "text-xs", "text-white/60")}>
