@@ -14,35 +14,30 @@ type ControlBarProps = {
 
 const presets = [
   {
-    label: "Tiny cartridge",
+    label: "粗いゲーム機",
     sampleSize: "12",
     pixelSize: "20",
     paletteSize: "6",
   },
   {
-    label: "Balanced lab",
+    label: "標準観察",
     sampleSize: "15",
     pixelSize: "15",
     paletteSize: "8",
   },
   {
-    label: "Poster proof",
+    label: "細部を拾う",
     sampleSize: "8",
     pixelSize: "12",
     paletteSize: "14",
   },
 ];
 
-const ControlSection = ({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) => (
+const ControlSection = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <section className={classNames("space-y-3", "border-t", "border-cyan-200/10", "pt-4")}>
     <h3
       className={classNames(
+        "font-mono",
         "text-[0.7rem]",
         "font-bold",
         "uppercase",
@@ -73,15 +68,15 @@ const SliderField = ({
   help: string;
   onChange: (value: string) => void;
 }) => (
-  <label htmlFor={id} className={classNames("block", "space-y-2")}>
+  <label htmlFor={id} className={classNames("block", "space-y-2", "font-mono")}>
     <span className={classNames("flex", "items-center", "justify-between", "gap-3")}>
-      <span className={classNames("text-sm", "font-semibold")}>{label}</span>
+      <span className={classNames("text-xs", "font-semibold")}>{label}</span>
       <span
         className={classNames(
           "min-w-[3rem]",
           "border",
-          "border-white/20",
-          "bg-black/30",
+          "border-cyan-100/15",
+          "bg-[#05070b]",
           "px-2",
           "py-1",
           "text-center",
@@ -101,34 +96,40 @@ const SliderField = ({
       onChange={(event) => onChange(event.currentTarget.value)}
       className={classNames("w-full", "accent-current")}
     />
-    <span className={classNames("block", "text-xs", "text-current", "opacity-70")}>{help}</span>
+    <span className={classNames("block", "text-xs", "text-cyan-100/55")}>{help}</span>
   </label>
 );
 
-export const ControlBar = ({
-  settings,
-  outputEstimate,
-  onSettingChange,
-}: ControlBarProps) => {
+export const ControlBar = ({ settings, outputEstimate, onSettingChange }: ControlBarProps) => {
   return (
     <section
       className={classNames(
         "space-y-5",
         "border",
         "border-cyan-300/20",
-        "bg-slate-950/70",
+        "bg-[#080d12]/90",
         "p-4",
         "text-cyan-50",
       )}
     >
       <div>
-        <h2 className={classNames("text-sm", "font-bold", "uppercase", "tracking-[0.16em]")}>
-          Calibration Deck
+        <h2
+          className={classNames(
+            "font-mono",
+            "text-xs",
+            "font-bold",
+            "uppercase",
+            "tracking-[0.16em]",
+          )}
+        >
+          設定端末
         </h2>
-        <p className={classNames("mt-1", "text-xs", "text-cyan-100/60")}>{outputEstimate}</p>
+        <p className={classNames("mt-1", "font-mono", "text-xs", "text-cyan-100/55")}>
+          {outputEstimate}
+        </p>
       </div>
 
-      <ControlSection label="Presets">
+      <ControlSection label="preset tags">
         <div className={classNames("grid", "gap-2")}>
           {presets.map((preset) => (
             <button
@@ -142,10 +143,11 @@ export const ControlBar = ({
               className={classNames(
                 "border",
                 "border-cyan-200/20",
-                "bg-cyan-100/5",
+                "bg-[#05070b]/75",
                 "px-3",
                 "py-2",
                 "text-left",
+                "font-mono",
                 "text-xs",
                 "font-semibold",
                 "text-cyan-50",
@@ -160,43 +162,43 @@ export const ControlBar = ({
         </div>
       </ControlSection>
 
-      <ControlSection label="Input Sampling">
+      <ControlSection label="sampling">
         <SliderField
           id="sample-size"
-          label="Sample Size"
+          label="サンプリング"
           min={1}
           max={50}
           value={settings.sampleSize}
-          help="小さいほど入力画像の細部を拾います。"
+          help="小さいほど細部を読みます。"
           onChange={(value) => onSettingChange("sampleSize", value)}
         />
       </ControlSection>
 
-      <ControlSection label="Pixel Output">
+      <ControlSection label="draw block">
         <SliderField
           id="pixel-size"
-          label="Pixel Size"
+          label="描画ブロック"
           min={1}
           max={50}
           value={settings.pixelSize}
-          help="大きいほど粗く、ドット感が強くなります。"
+          help="大きいほどドット感が強くなります。"
           onChange={(value) => onSettingChange("pixelSize", value)}
         />
       </ControlSection>
 
-      <ControlSection label="Palette">
+      <ControlSection label="palette">
         <SliderField
           id="palette-size"
-          label="Palette Size"
+          label="色数"
           min={1}
           max={32}
           value={settings.paletteSize}
-          help="少ないほどゲーム機風、多いほど写真に近づきます。"
+          help="少ないほどゲーム機風になります。"
           onChange={(value) => onSettingChange("paletteSize", value)}
         />
       </ControlSection>
 
-      <ControlSection label="Display Effect">
+      <ControlSection label="display effect">
         <label htmlFor="tv-effect-enabled" className={classNames("flex", "items-center", "gap-3")}>
           <input
             id="tv-effect-enabled"
@@ -205,11 +207,13 @@ export const ControlBar = ({
             onChange={(event) => onSettingChange("tvEffectEnabled", event.currentTarget.checked)}
             className={classNames("h-5", "w-5", "accent-current")}
           />
-          <span className={classNames("text-sm", "font-semibold")}>TV Effect</span>
+          <span className={classNames("font-mono", "text-xs", "font-semibold")}>TV表示</span>
         </label>
 
         <label htmlFor="tv-effect-preset" className={classNames("block", "space-y-1")}>
-          <span className={classNames("text-xs", "font-semibold", "uppercase")}>Preset</span>
+          <span className={classNames("font-mono", "text-xs", "font-semibold", "uppercase")}>
+            preset
+          </span>
           <select
             id="tv-effect-preset"
             value={settings.tvEffectPreset}
@@ -219,12 +223,13 @@ export const ControlBar = ({
             className={classNames(
               "w-full",
               "border",
-              "border-white/20",
-              "bg-black",
+              "border-cyan-100/15",
+              "bg-[#05070b]",
               "px-3",
               "py-2",
+              "font-mono",
               "text-sm",
-              "text-white",
+              "text-cyan-50",
             )}
           >
             <option value="soft-tv">Soft TV</option>
@@ -237,11 +242,11 @@ export const ControlBar = ({
 
         <SliderField
           id="tv-effect-strength"
-          label="TV Strength"
+          label="にじみ"
           min={0}
           max={100}
           value={settings.tvEffectStrength}
-          help="にじみ、走査線、レトロ感の強さ。"
+          help="走査線と画面のにじみ。"
           onChange={(value) => onSettingChange("tvEffectStrength", value)}
         />
       </ControlSection>

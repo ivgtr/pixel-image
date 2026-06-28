@@ -23,10 +23,10 @@ export const ImageSourcePicker = ({
 }: ImageSourcePickerProps) => {
   return (
     <section className={classNames("space-y-3")}>
-      <div className={classNames("flex", "gap-2")}>
+      <div className={classNames("grid", "grid-cols-2", "gap-1", "font-mono")}>
         {[
-          ["url", "URL"],
-          ["upload", "Upload"],
+          ["url", "[url]"],
+          ["upload", "[upload]"],
         ].map(([value, label]) => (
           <button
             key={value}
@@ -37,11 +37,12 @@ export const ImageSourcePicker = ({
               "border",
               "px-3",
               "py-2",
-              "text-sm",
+              "text-xs",
               "font-semibold",
+              "tracking-[0.08em]",
               sourceKind === value
-                ? "border-white bg-white text-black"
-                : "border-white/20 bg-white/5 text-white",
+                ? "border-cyan-100 bg-cyan-50 text-[#061014]"
+                : "border-cyan-100/15 bg-[#05070b]/60 text-cyan-50/70 hover:border-cyan-100/35",
             )}
           >
             {label}
@@ -52,7 +53,7 @@ export const ImageSourcePicker = ({
       {sourceKind === "url" ? (
         <div>
           <label htmlFor="pixel-image-url" className={classNames("mb-1", "block", "text-sm")}>
-            Image URL
+            画像URL
           </label>
           <input
             id="pixel-image-url"
@@ -62,26 +63,28 @@ export const ImageSourcePicker = ({
             className={classNames(
               "w-full",
               "border",
-              "border-white/20",
-              "bg-black/30",
+              "border-cyan-100/15",
+              "bg-[#05070b]",
               "px-3",
               "py-2",
+              "font-mono",
               "text-sm",
-              "text-white",
+              "text-cyan-50",
               "outline-none",
-              "focus:border-white",
+              "placeholder:text-cyan-100/30",
+              "focus:border-cyan-100/70",
             )}
           />
           {!compact && (
             <p className={classNames("mt-1", "text-xs", "text-white/60")}>
-              URL入力は共有可能なAPI URLを生成できます。
+              URL入力は共有用API URLを作れます。
             </p>
           )}
         </div>
       ) : (
         <div>
           <label htmlFor="pixel-image-upload" className={classNames("mb-1", "block", "text-sm")}>
-            Upload PNG / JPEG
+            PNG / JPEGを読み込む
           </label>
           <input
             id="pixel-image-upload"
@@ -91,16 +94,17 @@ export const ImageSourcePicker = ({
             className={classNames(
               "w-full",
               "border",
-              "border-white/20",
-              "bg-black/30",
+              "border-cyan-100/15",
+              "bg-[#05070b]",
               "px-3",
               "py-2",
+              "font-mono",
               "text-sm",
-              "text-white",
+              "text-cyan-50",
             )}
           />
           <p className={classNames("mt-1", "text-xs", "text-white/60")}>
-            アップロード画像は保存されず、共有URLは作成されません。
+            保存しません。共有URLも作りません。
           </p>
           {fileError && (
             <p role="alert" className={classNames("mt-2", "text-sm", "text-red-200")}>

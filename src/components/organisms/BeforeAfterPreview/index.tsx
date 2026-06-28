@@ -23,7 +23,7 @@ const ImagePane = ({
       "relative",
       "min-h-[22rem]",
       "overflow-hidden",
-      "bg-black/40",
+      "bg-[#05070b]",
       "md:min-h-[36rem]",
     )}
   >
@@ -34,15 +34,16 @@ const ImagePane = ({
         "top-3",
         "z-10",
         "border",
-        "border-white/20",
-        "bg-black/70",
+        "border-cyan-100/20",
+        "bg-[#05070b]/85",
         "px-2",
         "py-1",
-        "text-xs",
+        "font-mono",
+        "text-[0.68rem]",
         "font-semibold",
         "uppercase",
-        "tracking-[0.18em]",
-        "text-white",
+        "tracking-[0.14em]",
+        "text-cyan-50",
       )}
     >
       {label}
@@ -60,10 +61,11 @@ const ImagePane = ({
           "p-8",
           "text-center",
           "text-sm",
-          "text-white/60",
+          "font-mono",
+          "text-cyan-100/45",
         )}
       >
-        Image preview waits here.
+        画像を読み込むとここに表示されます
       </div>
     )}
   </figure>
@@ -90,13 +92,14 @@ export const BeforeAfterPreview = ({
             "flex",
             "items-center",
             "justify-center",
-            "bg-black/60",
-            "text-sm",
+            "bg-[#05070b]/75",
+            "font-mono",
+            "text-xs",
             "font-semibold",
-            "text-white",
+            "text-cyan-50",
           )}
         >
-          Generating pixel image...
+          変換中...
         </div>
       )}
       {errorMessage && (
@@ -109,11 +112,12 @@ export const BeforeAfterPreview = ({
             "right-3",
             "z-30",
             "border",
-            "border-red-300/70",
-            "bg-red-950/90",
+            "border-pink-200/60",
+            "bg-[#2b101b]/95",
             "p-3",
+            "font-mono",
             "text-sm",
-            "text-red-50",
+            "text-pink-50",
           )}
         >
           {errorMessage}
@@ -123,36 +127,50 @@ export const BeforeAfterPreview = ({
   );
 
   return (
-    <section className={classNames("relative", frameClassName)}>
+    <section className={classNames("relative", "overflow-hidden", frameClassName)}>
+      <div
+        className={classNames(
+          "pointer-events-none",
+          "absolute",
+          "inset-x-0",
+          "top-0",
+          "z-10",
+          "flex",
+          "items-center",
+          "justify-between",
+          "border-b",
+          "border-cyan-100/10",
+          "bg-[#05070b]/70",
+          "px-3",
+          "py-2",
+          "font-mono",
+          "text-[0.65rem]",
+          "uppercase",
+          "tracking-[0.14em]",
+          "text-cyan-100/55",
+        )}
+      >
+        <span>preview.compare</span>
+        <span>object-contain</span>
+      </div>
       <div
         className={classNames("hidden", "h-full", "overflow-hidden", "md:grid", "md:grid-cols-2")}
       >
-        <ImagePane label="Original" imageUrl={originalImageUrl} alt="Original image preview" />
-        <ImagePane label="Pixelated" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
+        <ImagePane label="元画像" imageUrl={originalImageUrl} alt="Original image preview" />
+        <ImagePane label="変換後" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
       </div>
 
       <div className={classNames("md:hidden")}>
-        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-black/40")}>
-          <ImagePane label="Original" imageUrl={originalImageUrl} alt="Original image preview" />
+        <div className={classNames("relative", "min-h-[22rem]", "overflow-hidden", "bg-[#05070b]")}>
+          <ImagePane label="元画像" imageUrl={originalImageUrl} alt="Original image preview" />
           <div
             className={classNames("absolute", "inset-0", "overflow-hidden")}
             style={{ clipPath: `inset(0 ${100 - mobileCompareNumber}% 0 0)` }}
           >
-            <ImagePane
-              label="Pixelated"
-              imageUrl={generatedImageUrl}
-              alt="Pixelated image preview"
-            />
+            <ImagePane label="変換後" imageUrl={generatedImageUrl} alt="Pixelated image preview" />
           </div>
           <div
-            className={classNames(
-              "absolute",
-              "inset-y-0",
-              "z-10",
-              "w-0.5",
-              "bg-cyan-100",
-              "shadow-[0_0_12px_rgba(207,250,254,0.75)]",
-            )}
+            className={classNames("absolute", "inset-y-0", "z-10", "w-0.5", "bg-pink-100")}
             style={{ left: `${mobileCompareNumber}%` }}
           />
         </div>
@@ -162,16 +180,17 @@ export const BeforeAfterPreview = ({
             "block",
             "border-t",
             "border-cyan-200/10",
-            "bg-black/30",
+            "bg-[#090d12]",
             "p-3",
+            "font-mono",
             "text-xs",
             "font-semibold",
             "text-cyan-100",
           )}
         >
           <span className={classNames("mb-2", "flex", "items-center", "justify-between", "gap-3")}>
-            <span>Before / After</span>
-            <span className={classNames("tabular-nums")}>{mobileCompare}% After</span>
+            <span>元画像 / 変換後</span>
+            <span className={classNames("tabular-nums")}>after {mobileCompare}%</span>
           </span>
           <input
             id="before-after-mobile-slider"
