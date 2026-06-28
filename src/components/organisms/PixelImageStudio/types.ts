@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { TvEffectPreset } from "../../../server/pixelImage/tvEffect/types";
 
 export const uiModes = ["lab", "arcade", "gallery", "artifact"] as const;
@@ -55,7 +56,7 @@ export type PixelImageStudioController = {
 
 export type PixelImageStudioViewProps = {
   studio: PixelImageStudioController;
-  themeSwitcher: React.ReactNode;
+  themeSwitcher: ReactNode;
 };
 
 export type ComparisonMode = "side-by-side" | "split" | "toggle" | "stacked";
